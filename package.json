@@ -1,10 +1,11 @@
 {
     "name": "meetuper",
-    "version": "0.1.0",
-    "private": true,
+    "version": "1.0.0",
+    "private": false,
     "main": "src/main.js",
     "author": "Faysal Ahmed",
     "description": "Full Stack project with vue-js node-js and mongodb",
+    "license": "ISC",
     "repository": {
         "url": "https://github.com/faysal146/vue-node-mongodb-full-stack.git"
     },
@@ -12,7 +13,8 @@
         "serve": "vue-cli-service serve",
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
-        "eslint": "eslint --ext .js,.vue --fix src/"
+        "eslint": "eslint --ext .js,.vue --fix src/",
+        "start-server": "nodemon server/index.js"
     },
     "dependencies": {
         "algoliasearch": "^4.2.0",
@@ -32,7 +34,7 @@
         "jsonwebtoken": "^8.5.1",
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
-        "mongoose": "^5.9.10",
+        "mongoose": "5.9.5",
         "morgan": "^1.10.0",
         "node-geocoder": "^3.27.0",
         "passport": "^0.4.1",

@@ -36,7 +36,9 @@
 </template>
 
 <script>
-export default {};
+export default {
+    name: 'AppDropDown'
+};
 </script>
 
 <style></style>

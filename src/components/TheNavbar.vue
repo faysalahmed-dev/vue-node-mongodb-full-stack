@@ -5,9 +5,11 @@
         aria-label="main navigation"
     >
         <div class="navbar-brand">
-            <a class="navbar-item" href="https://bulma.io">
-                <h1 class="brand-title title is-4">VueMeetuper</h1>
-            </a>
+            <router-link class="navbar-item" :to="{ name: 'homePage' }">
+                <h1 class="brand-title title is-4">
+                    VueMeetuper
+                </h1>
+            </router-link>
             <a
                 role="button"
                 class="navbar-burger burger"
@@ -23,14 +25,9 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item">
-                    Home
-                </a>
-
-                <a class="navbar-item">
+                <router-link :to="{ name: 'findMeetups' }">
                     Find
-                </a>
-
+                </router-link>
                 <div class="navbar-item has-dropdown is-hoverable">
                     <a class="navbar-link">
                         More

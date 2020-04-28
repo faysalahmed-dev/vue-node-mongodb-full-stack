@@ -1,16 +1,16 @@
-const Thread = require('../models/threads');
+const Post = require('../models/posts');
 
 exports.getPosts = function(req, res) {
-  const threadId = req.query.threadId;
+    const threadId = req.query.threadId;
 
-  Post.find({'thread': threadId})
+    Post.find({ thread: threadId })
         .populate('user')
+        .select('-_id')
         .exec((errors, posts) => {
+            if (errors) {
+                return res.status(422).send({ errors });
+            }
 
-    if (errors) {
-      return res.status(422).send({errors});
-    }
-
-    return res.json(posts);
-  });
-}
+            return res.json(posts);
+        });
+};

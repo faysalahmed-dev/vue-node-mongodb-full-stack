@@ -1,25 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const config = require('./config/dev');
+const config = require('./config/dev.js');
 
-require("./models/meetups");
-require("./models/users");
-require("./models/threads");
-require("./models/posts");
-require("./models/categories");
+require('./models/meetups');
+require('./models/users');
+require('./models/threads');
+require('./models/posts');
+require('./models/categories');
 
 const meetupsRoutes = require('./routes/meetups'),
-      usersRoutes = require('./routes/users'),
-      threadsRoutes = require('./routes/threads'),
-      postsRoutes = require('./routes/posts'),
-      categoriesRoutes = require('./routes/categories');
+    usersRoutes = require('./routes/users'),
+    threadsRoutes = require('./routes/threads'),
+    postsRoutes = require('./routes/posts'),
+    categoriesRoutes = require('./routes/categories');
 
-mongoose.connect(config.DB_URI, { useNewUrlParser: true })
-  .then(() => console.log('DB Connected!'))
-  .catch(err => console.log(err));
+mongoose
+    .connect(config.DB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        poolSize: 50,
+        wtimeout: 30000,
+        useCreateIndex: true
+    })
+    .then(() => console.log('DB Connected!'))
+    .catch(err => console.log(err.message));
 
 const app = express();
+
+app.use(require('morgan')('dev'));
 
 app.use(bodyParser.json());
 
@@ -31,6 +40,6 @@ app.use('/api/v1/categories', categoriesRoutes);
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT , function() {
-  console.log('App is running on port: ' + PORT);
+app.listen(PORT, function() {
+    console.log('App is running on port: ' + PORT);
 });
