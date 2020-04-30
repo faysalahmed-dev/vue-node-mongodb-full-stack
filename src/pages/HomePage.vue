@@ -17,12 +17,18 @@
                         </button>
                     </div>
                 </div>
-                <div class="row columns is-multiline">
+                <div v-if="meetups" class="row columns is-multiline">
                     <MeetupItem
                         v-for="meetup in meetups"
                         :key="meetup.id"
                         :meetup="meetup"
                     />
+                </div>
+                <div
+                    v-else
+                    class="spiner-container d-flex justify-content-center align-items-center"
+                >
+                    <Spiner />
                 </div>
             </section>
             <section class="section">
@@ -30,12 +36,22 @@
                     <h1 class="title">
                         Categories
                     </h1>
-                    <div class="columns cover is-multiline is-mobile">
+                    <div
+                        v-if="categories"
+                        class="columns cover is-multiline is-mobile"
+                    >
                         <CategoryItem
                             v-for="category in categories"
                             :key="category.id"
                             :category="category"
                         />
+                    </div>
+
+                    <div
+                        v-else
+                        class="spiner-container d-flex justify-content-center align-items-center"
+                    >
+                        <Spiner />
                     </div>
                 </div>
             </section>
@@ -48,32 +64,30 @@ import AppHero from '@/components/AppHero';
 import AppDropDown from '@/components/AppDropdown';
 import CategoryItem from '@/components/CategoryItem';
 import MeetupItem from '@/components/MeetupItem';
-import axios from 'axios';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'App',
+    computed: mapGetters({
+        meetups: 'meetups/meetups',
+        categories: 'categories'
+    }),
+    methods: mapActions({
+        fetchMeetups: 'meetups/fetchMeetups',
+        fetchCategories: 'fetchCategories'
+        // fetchThreads: 'fetchThreads'
+    }),
     components: { AppHero, AppDropDown, CategoryItem, MeetupItem },
-    data() {
-        return {
-            categories: [],
-            meetups: []
-        };
-    },
-    methods: {
-        async fetchMeetup() {
-            const res = await axios.get('/api/v1/meetups');
-            this.meetups = res.data;
-        },
-        async fetchCategories() {
-            const res = await axios.get('/api/v1/categories');
-            this.categories = res.data;
-        }
-    },
     async created() {
-        this.fetchMeetup();
+        // console.log(this.fetchThreads);
+        this.fetchMeetups();
         this.fetchCategories();
     }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.spiner-container {
+    min-height: 200px;
+}
+</style>

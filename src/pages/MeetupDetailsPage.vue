@@ -1,230 +1,279 @@
 <template>
-    <div class="meetup-detail-page">
-        <section class="hero">
-            <div class="hero-body">
-                <div class="container">
-                    <h2 class="subtitle">
-                        {{ meetup.startDate | formatTime }}
-                    </h2>
-                    <h1 class="title">
-                        {{ meetup.title }}
-                    </h1>
-                    <article class="media v-center">
-                        <figure class="media-left">
-                            <p
-                                class="image is-64x64 overflow-hidden rounded-circle avter-image"
-                            >
-                                <img :src="meetup.image" :alt="meetup.title" />
-                            </p>
-                        </figure>
-                        <div class="media-content">
-                            <div class="content">
-                                <p>
-                                    <!-- OPTIONAL: meetupCreator name -->
-                                    Created by
-                                    <strong>{{ creatorName }}</strong>
-                                </p>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-                <div class="is-pulled-right">
-                    <!-- We will handle this later (: -->
-                    <button class="button is-danger">
-                        Leave Group
-                    </button>
-                </div>
-            </div>
-        </section>
-        <section class="section">
-            <div class="container">
-                <div class="columns">
-                    <div class="column is-3">
-                        <aside class="is-medium menu">
-                            <div class="meetup-side-box">
-                                <div class="meetup-side-box-date mb-2">
-                                    <p><b>Date</b></p>
-                                    <p>{{ meetup.startDate | formatTime }}</p>
-                                </div>
-                                <div class="meetup-side-box-date mb-2">
-                                    <p><b>Time</b></p>
-                                    <!-- TODO: meetup timeFrom - timeTo -->
-                                    <span>{{ meetup.timeFrom }}</span> -
-                                    <span>{{ meetup.timeTo }}</span>
-                                </div>
-                                <div class="meetup-side-box-place mb-2">
-                                    <p><b>How to find us</b></p>
-                                    <!-- TODO: meetup location -->
-                                    <p>{{ meetup.location }}</p>
-                                </div>
-                                <div class="meetup-side-box-more-info">
-                                    <p><b>Additional Info</b></p>
-                                    <!-- TODO: meetup shortInfo -->
-                                    <p>{{ meetup.shortInfo }}</p>
-                                </div>
-                            </div>
-                            <div class="meetup-side-box-map">
-                                <img
-                                    src="https://cnet2.cbsistatic.com/img/H_zPLL8-QTZOLxJvgHQ1Jkz0EgY=/830x467/2013/07/10/f0bcef02-67c2-11e3-a665-14feb5ca9861/maps_routemap.png"
-                                    class="venueMap-mapImg span--100"
-                                    alt="Location image of meetup venue"
-                                />
-                            </div>
-                            <!-- Threads Start -->
-                            <p class="menu-label">
-                                Threads
-                            </p>
-                            <ul>
-                                <li v-for="thread in threads" :key="thread.id">
-                                    {{ thread.title }}
-                                </li>
-                            </ul>
-                            <p class="menu-label">
-                                Who is Going
-                            </p>
-                            <div
-                                class="columns is-multiline is-mobile"
-                                v-for="people in meetup.joinedPeople"
-                                :key="people.id"
-                            >
-                                <!-- Joined People Images Here -->
-                                <div class="column is-3">
-                                    <figure class="image is-64x64">
-                                        <img
-                                            class="is-rounded"
-                                            :src="people.avatar"
-                                            alt="Image"
-                                        />
-                                    </figure>
-                                </div>
-                            </div>
-                            <!-- Threads Ends -->
-                        </aside>
-                    </div>
-                    <div class="column is-7 is-offset-1">
-                        <div class="content is-medium">
-                            <h3 class="title is-3">
-                                About the Meetup
-                            </h3>
-                            <!-- TODO: meetup description -->
-                            <p>
-                                {{ meetup.description }}
-                                <!-- Join Meetup, We will handle it later (: -->
-                                <button class="button is-primary">
-                                    Join In
-                                </button>
-                                <!-- Not logged In Case, handle it later (: -->
-                                <!-- <button :disabled="true"
-                      class="button is-warning">You need authenticate in order to join</button> -->
-                            </p>
-                        </div>
-                        <!-- Thread List START -->
-                        <div class="content is-medium">
-                            <h3 class="title is-3">
-                                Threads
-                            </h3>
-                            <div
-                                class="box"
-                                v-for="thread in threads"
-                                :key="thread.id"
-                            >
-                                <!-- Thread title -->
-                                <h4 id="const" class="title is-3">
-                                    {{ thread.title }}
-                                </h4>
-                                <!-- Create new post, handle later -->
-                                <form class="post-create">
-                                    <div class="field">
-                                        <textarea
-                                            class="textarea textarea-post"
-                                            placeholder="Write a post"
-                                            rows="1"
-                                        ></textarea>
-                                        <button
-                                            :disabled="true"
-                                            class="button is-primary mt-2"
-                                        >
-                                            Send
-                                        </button>
-                                    </div>
-                                </form>
-                                <!-- Create new post END, handle later -->
-                                <!-- Posts START -->
-                                <article
-                                    class="media post-item"
-                                    v-for="post in thread.posts"
-                                    :key="post.id"
+    <div :class="['meetup-detail-page', bindClass]">
+        <template v-if="meetup">
+            <section class="hero">
+                <div class="hero-body">
+                    <div class="container">
+                        <h2 class="subtitle">
+                            {{ meetup.startDate | formatTime }}
+                        </h2>
+                        <h1 class="title">
+                            {{ meetup.title }}
+                        </h1>
+                        <article class="media v-center">
+                            <figure class="media-left">
+                                <p
+                                    class="image is-64x64 overflow-hidden rounded-circle avter-image"
                                 >
-                                    <figure
-                                        class="media-left is-rounded user-image"
+                                    <img
+                                        :src="meetup.image"
+                                        :alt="meetup.title"
+                                    />
+                                </p>
+                            </figure>
+                            <div class="media-content">
+                                <div class="content">
+                                    <p>
+                                        <!-- OPTIONAL: meetupCreator name -->
+                                        Created by
+                                        <strong>{{ creatorName }}</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="is-pulled-right">
+                        <!-- We will handle this later (: -->
+                        <button class="button is-danger">
+                            Leave Group
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <section class="section">
+                <div class="container">
+                    <div class="columns">
+                        <div class="column is-3">
+                            <aside class="is-medium menu">
+                                <div class="meetup-side-box">
+                                    <div class="meetup-side-box-date mb-2">
+                                        <p><b>Date</b></p>
+                                        <p>
+                                            {{ meetup.startDate | formatTime }}
+                                        </p>
+                                    </div>
+                                    <div class="meetup-side-box-date mb-2">
+                                        <p><b>Time</b></p>
+                                        <!-- TODO: meetup timeFrom - timeTo -->
+                                        <span>{{ meetup.timeFrom }}</span> -
+                                        <span>{{ meetup.timeTo }}</span>
+                                    </div>
+                                    <div class="meetup-side-box-place mb-2">
+                                        <p><b>How to find us</b></p>
+                                        <!-- TODO: meetup location -->
+                                        <p>{{ meetup.location }}</p>
+                                    </div>
+                                    <div class="meetup-side-box-more-info">
+                                        <p><b>Additional Info</b></p>
+                                        <!-- TODO: meetup shortInfo -->
+                                        <p>{{ meetup.shortInfo }}</p>
+                                    </div>
+                                </div>
+                                <div class="meetup-side-box-map">
+                                    <img
+                                        src="https://cnet2.cbsistatic.com/img/H_zPLL8-QTZOLxJvgHQ1Jkz0EgY=/830x467/2013/07/10/f0bcef02-67c2-11e3-a665-14feb5ca9861/maps_routemap.png"
+                                        class="venueMap-mapImg span--100"
+                                        alt="Location image of meetup venue"
+                                    />
+                                </div>
+                                <!-- Threads Start -->
+                                <p class="menu-label">
+                                    Threads
+                                </p>
+                                <ul v-if="threads">
+                                    <li
+                                        v-for="thread in threads"
+                                        :key="thread.id"
                                     >
-                                        <p class="image is-32x32">
+                                        {{ thread.title }}
+                                    </li>
+                                </ul>
+                                <div
+                                    v-else
+                                    class="spiner-container d-flex justify-content-center align-items-center"
+                                >
+                                    <Spiner />
+                                </div>
+                                <p class="menu-label">
+                                    Who is Going
+                                </p>
+                                <div
+                                    class="columns is-multiline is-mobile"
+                                    v-for="people in meetup.joinedPeople"
+                                    :key="people.id"
+                                >
+                                    <!-- Joined People Images Here -->
+                                    <div class="column is-3">
+                                        <figure class="image is-64x64">
                                             <img
                                                 class="is-rounded"
-                                                :src="post.user.avatar"
+                                                :src="people.avatar"
+                                                alt="Image"
                                             />
-                                        </p>
-                                    </figure>
-                                    <div class="media-content">
-                                        <div class="content is-medium">
-                                            <div class="post-content">
-                                                <!-- Post User Name -->
-                                                <strong class="author">{{
-                                                    post.user.name
-                                                }}</strong>
-                                                {{ ' ' }}
-                                                <!-- Post Updated at -->
-                                                <small class="post-time">{{
-                                                    post.updatedAt
-                                                        | formatTime('LLL')
-                                                }}</small>
-                                                <br />
-                                                <p class="post-content-message">
-                                                    {{ post.text }}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        </figure>
                                     </div>
-                                </article>
-                                <!-- Posts END -->
-                            </div>
+                                </div>
+                                <!-- Threads Ends -->
+                            </aside>
                         </div>
-                        <!-- Thread List END -->
+                        <div class="column is-7 is-offset-1">
+                            <div class="content is-medium">
+                                <h3 class="title is-3">
+                                    About the Meetup
+                                </h3>
+                                <!-- TODO: meetup description -->
+                                <p>
+                                    {{ meetup.description }}
+                                    <!-- Join Meetup, We will handle it later (: -->
+                                    <button class="button is-primary">
+                                        Join In
+                                    </button>
+                                    <!-- Not logged In Case, handle it later (: -->
+                                    <!-- <button :disabled="true"
+                        class="button is-warning">You need authenticate in order to join</button> -->
+                                </p>
+                            </div>
+                            <!-- Thread List START -->
+                            <div class="content is-medium">
+                                <h3 class="title is-3">
+                                    Threads
+                                </h3>
+                                <template v-if="threads">
+                                    <div
+                                        class="box"
+                                        v-for="thread in threads"
+                                        :key="thread.id"
+                                    >
+                                        <!-- Thread title -->
+                                        <h4 id="const" class="title is-3">
+                                            {{ thread.title }}
+                                        </h4>
+                                        <!-- Create new post, handle later -->
+                                        <form class="post-create">
+                                            <div class="field">
+                                                <textarea
+                                                    class="textarea textarea-post"
+                                                    placeholder="Write a post"
+                                                    rows="1"
+                                                ></textarea>
+                                                <button
+                                                    :disabled="true"
+                                                    class="button is-primary mt-2"
+                                                >
+                                                    Send
+                                                </button>
+                                            </div>
+                                        </form>
+                                        <!-- Create new post END, handle later -->
+                                        <!-- Posts START -->
+                                        <article
+                                            class="media post-item"
+                                            v-for="post in thread.posts"
+                                            :key="post.id"
+                                        >
+                                            <figure
+                                                class="media-left is-rounded user-image"
+                                            >
+                                                <p class="image is-32x32">
+                                                    <img
+                                                        class="is-rounded"
+                                                        :src="post.user.avatar"
+                                                    />
+                                                </p>
+                                            </figure>
+                                            <div class="media-content">
+                                                <div class="content is-medium">
+                                                    <div class="post-content">
+                                                        <!-- Post User Name -->
+                                                        <strong class="author">
+                                                            {{ post.user.name }}
+                                                        </strong>
+                                                        {{ ' ' }}
+                                                        <!-- Post Updated at -->
+                                                        <small
+                                                            class="post-time"
+                                                        >
+                                                            {{
+                                                                post.updatedAt
+                                                                    | formatTime(
+                                                                        'LLL'
+                                                                    )
+                                                            }}
+                                                        </small>
+                                                        <br />
+                                                        <p
+                                                            class="post-content-message"
+                                                        >
+                                                            {{ post.text }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </article>
+                                        <!-- Posts END -->
+                                    </div>
+                                </template>
+                                <div
+                                    v-else
+                                    style="height:200px"
+                                    class="spiner-container d-flex justify-content-center align-items-center"
+                                >
+                                    <Spiner />
+                                </div>
+                                <p
+                                    v-if="threads && threads < 1"
+                                    class="p-4 text-center size-4"
+                                >
+                                    no threads found
+                                </p>
+                            </div>
+                            <!-- Thread List END -->
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </template>
+        <div
+            v-else
+            class="spiner-container d-flex justify-content-center align-items-center"
+        >
+            <Spiner />
+        </div>
     </div>
 </template>
 <script>
-import axios from 'axios';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
     name: 'MeetupDetailsPage',
-    data() {
-        return { meetup: {}, threads: {} };
-    },
     computed: {
+        ...mapGetters({
+            meetup: 'meetups/meetup',
+            threads: 'threads'
+        }),
         creatorName() {
             const creator = this.meetup.meetupCreator;
             return creator ? creator.name : '';
-        }
-    },
-    methods: {
-        async fetchMeetups() {
-            const id = this.$route.params.id;
-            const res = await axios.get(`/api/v1/meetups/${id}`);
-            this.meetup = res.data;
         },
-        async fetchThreads() {
-            const id = this.$route.params.id;
-            const res = await axios.get(`/api/v1/threads?meetupId=${id}`);
-            this.threads = res.data;
+        bindClass() {
+            const classes = [
+                'd-flex',
+                'justify-content-center',
+                'align-itmes-center',
+                'flex-grow-1'
+            ];
+            if (!this.meetup) return classes;
+            return '';
         }
     },
+    methods: mapActions({
+        fetchMeetup: 'meetups/fetchMeetup',
+        fetchThreads: 'fetchThreads'
+    }),
     created() {
-        this.fetchMeetups();
-        this.fetchThreads();
+        const { id } = this.$route.params;
+        this.fetchMeetup(id);
+        this.fetchThreads(id);
     }
 };
 </script>

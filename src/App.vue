@@ -1,7 +1,9 @@
 <template>
     <div id="app">
         <TheNavbar />
-        <router-view />
+        <div class="flex-grow-1 d-flex flex-column">
+            <router-view />
+        </div>
         <TheFooter />
     </div>
 </template>
@@ -19,20 +21,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import 'assets/css/utils.css';
-@import '~bulma/bulma.sass';
-:root {
-    --bold-font-family: 'Fredoka One', 'Quicksand', Helvetica, Arial, sans-serif;
-    --font-family: 'Quicksand', Helvetica, Arial, sans-serif;
-}
-
-#app {
-    font-family: var(--font-family);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
-}
-
 .bold {
     font-weight: bold;
 }

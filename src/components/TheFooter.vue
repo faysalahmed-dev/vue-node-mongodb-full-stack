@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer">
+    <footer class="footer p-4">
         <div class="content has-text-centered">
             <p>
                 <strong>VueMeetuper</strong> by

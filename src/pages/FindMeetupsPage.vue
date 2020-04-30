@@ -33,7 +33,7 @@
         </div>
         <div class="container">
             <section class="section page-find">
-                <div class="columns cover is-multiline">
+                <div v-if="meetups" class="columns cover is-multiline">
                     <div
                         v-for="meetup of meetups"
                         :key="meetup.id"
@@ -70,8 +70,9 @@
                                     </p>
                                     <span
                                         class="tag is-success mb-2 text-captalize"
-                                        >{{ meetup.category.name }}</span
                                     >
+                                        {{ meetup.category.name }}
+                                    </span>
                                     <p class="subtitle is-7">
                                         {{ meetup.location }}
                                     </p>
@@ -85,9 +86,16 @@
                         </router-link>
                     </div>
                 </div>
+
+                <div
+                    v-else
+                    class="spiner-container d-flex justify-content-center align-items-center my-5"
+                >
+                    <Spiner />
+                </div>
             </section>
         </div>
-        <div>
+        <div v-if="meetups && meetups.length < 1">
             <span class="tag is-warning is-large">
                 No meetups found :( You might try to change search criteria (:
             </span>
@@ -96,19 +104,15 @@
 </template>
 
 <script>
-import axios from 'axios';
 import AppHero from '@/components/AppHero';
+import { mapGetters, mapActions } from 'vuex';
 export default {
     name: 'FindMeetups',
-    data() {
-        return {
-            meetups: []
-        };
-    },
     components: { AppHero },
-    async created() {
-        const res = await axios.get('/api/v1/meetups');
-        this.meetups = res.data;
+    computed: mapGetters('meetups', ['meetups']),
+    methods: mapActions('meetups', ['fetchMeetups']),
+    created() {
+        this.fetchMeetups();
     }
 };
 </script>
