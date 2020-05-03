@@ -7,13 +7,14 @@ import { get } from '@/api/api';
 // import categories from './modules/categories';
 // import threads from './modules/threads';
 import meetups from './modules/meetups';
+import auth from './modules/auth';
 const _SET_CATEGORIES = 'SET_CATEGORIES';
 const _SET_THREADS = 'SET_THREADS';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    modules: { meetups },
+    modules: { meetups, auth },
     state: {
         threads: null, // => array
         categories: null // => arrary

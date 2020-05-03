@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import Vuelidate from 'vuelidate';
 import router from '@/routes';
 import store from '@/store';
 import App from './App.vue';
@@ -14,6 +15,7 @@ Vue.filter('formatTime', (value, formateType = 'LL') => {
 });
 
 Vue.component('Spiner', Spiner);
+Vue.use(Vuelidate);
 
 Vue.config.productionTip = false;
 
