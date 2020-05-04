@@ -1,13 +1,12 @@
 import Vue from 'vue';
-import Vuelidate from 'vuelidate';
+import moment from 'moment';
 import router from '@/routes';
 import store from '@/store';
-import App from './App.vue';
-import moment from 'moment';
-import Spiner from './components/Spiner.vue';
-import './registerServiceWorker';
+import App from '@/App.vue';
+import Spiner from '@/components/Spiner.vue';
+import '@/registerServiceWorker';
 
-import './sass/styles.scss';
+import '@/sass/styles.scss';
 
 Vue.filter('formatTime', (value, formateType = 'LL') => {
     if (!value) return '';
@@ -15,7 +14,6 @@ Vue.filter('formatTime', (value, formateType = 'LL') => {
 });
 
 Vue.component('Spiner', Spiner);
-Vue.use(Vuelidate);
 
 Vue.config.productionTip = false;
 
