@@ -30,12 +30,12 @@ const loginUser = new LocalStrategy(
     async (email, password, done) => {
         try {
             // find the user by email address
-            const user = await User.findOne({ email: email.toLowerCase() });
+            const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
             // if no user found
             if (!user) return done(httpError(403, 'no user found'));
 
             // if user found check password match
-            const isMatch = await user.comparePassword(password);
+            const isMatch = await User.comparePassword(password, user.password);
 
             if (isMatch) {
                 return done(null, user);

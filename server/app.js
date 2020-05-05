@@ -4,6 +4,7 @@ const passport = require('passport');
 const expressSession = require('express-session');
 const MongodbStore = require('connect-mongodb-session')(expressSession);
 const moment = require('moment');
+const sendResponse = require('./utils/sendResponse');
 
 const meetupsRoutes = require('./routes/meetups'),
     usersRoutes = require('./routes/users'),
@@ -45,21 +46,20 @@ app.use('/api/v1/categories', categoriesRoutes);
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-    const statusCode = err.statusCode || 500;
-    let status = 'fail';
-    if (statusCode >= 400 || statusCode < 500) {
-        status = 'error';
-    } else if (status < 300) status = 'success';
-    /*
-    TODO 
-    check error message it is related to server or ganaral error message if it is server error message sent to client or sent "some thing went wrong"
-    */
-    const errRes = { status, message: err.message };
+    console.log(err);
+    const errRes = {};
     if (err.data) errRes.error = err.data;
+
+    if (err.statusCode && err.statusCode < 500) {
+        errRes.message = err.message;
+    } else {
+        errRes.message = 'some thing went wrong';
+    }
     if (process.env.NODE_ENV === 'development') {
         errRes.stack = err.stack;
+        errRes.message = err.message;
     }
-    res.status(statusCode).json(errRes);
+    sendResponse(res, err.statusCode, errRes);
 });
 
 module.exports = app;

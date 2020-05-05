@@ -41,7 +41,8 @@ const userSchema = new Schema(
             type: String,
             min: [constains.passwordMinLength, 'Too short, min is {{VALUE}} characters'],
             max: [constains.passwordMaxLength, 'Too long, max is {{VALUE}} characters'],
-            required: 'Password is required'
+            required: 'Password is required',
+            select: false
         },
         info: String,
         joinedMeetups: [{ type: Schema.Types.ObjectId, ref: 'Meetup' }]
@@ -73,8 +74,8 @@ userSchema.pre('save', function(next) {
 });
 
 //Every user have acces to this methods
-userSchema.methods.comparePassword = function(candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
+userSchema.statics.comparePassword = function(candidatePassword, USER_DB_PASSWORD) {
+    return bcrypt.compare(candidatePassword, USER_DB_PASSWORD);
 };
 
 userSchema.virtual('id').get(function() {

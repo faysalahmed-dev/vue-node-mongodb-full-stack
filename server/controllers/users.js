@@ -1,11 +1,17 @@
 const passpost = require('passport');
 const User = require('../models/users');
 const catchError = require('../utils/catchError');
+const sendResponse = require('../utils/sendResponse');
+const httpError = require('http-errors');
 
 exports.getUsers = catchError(async (req, res) => {
-    console.log(req.headers);
-    const user = await User.find({});
-    res.json(user);
+    const users = await User.find({});
+    sendResponse(res, 200, { data: users });
+});
+
+exports.authUser = catchError(async (req, res, next) => {
+    if (!req.user) return next(httpError(422, 'user no longer exits. please login again'));
+    sendResponse(res, 200, { data: req.user });
 });
 
 exports.signup = (req, res, next) => {
@@ -13,7 +19,8 @@ exports.signup = (req, res, next) => {
         if (err) return next(err);
         req.login(user, err => {
             if (err) return next(err);
-            res.status(201).json({ user });
+
+            sendResponse(res, 201, { data: user });
         });
     })(req, res, next);
 };
@@ -23,12 +30,12 @@ exports.login = (req, res, next) => {
         if (err) return next(err);
         req.login(user, err => {
             if (err) return next(err);
-            res.status(200).json({ user });
+            sendResponse(res, 200, { data: user });
         });
     })(req, res, next);
 };
 
 exports.logout = (req, res) => {
     req.logout();
-    res.status(200).json({ message: 'logout successfuly' });
+    sendResponse(res, 200, { message: 'logout successfuly' });
 };
