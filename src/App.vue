@@ -1,22 +1,31 @@
 <template>
     <div id="app">
-        <TheNavbar />
-        <div class="flex-grow-1 d-flex flex-column">
-            <router-view />
+        <template v-if="authStateLoading">
+            <TheNavbar />
+            <div class="flex-grow-1 d-flex flex-column">
+                <router-view />
+            </div>
+            <TheFooter />
+        </template>
+        <div v-else class="d-flex justify-content-center align-items-center vh-100">
+            <Spinner />
         </div>
-        <TheFooter />
     </div>
 </template>
 
 <script>
 import TheNavbar from '@/components/TheNavbar';
 import TheFooter from '@/components/TheFooter';
+import Spinner from '@/components/Spiner';
+import { mapGetters } from 'vuex';
 export default {
     name: 'App',
     components: {
         TheNavbar,
-        TheFooter
-    }
+        TheFooter,
+        Spinner
+    },
+    computed: mapGetters('auth', ['authStateLoading'])
 };
 </script>
 

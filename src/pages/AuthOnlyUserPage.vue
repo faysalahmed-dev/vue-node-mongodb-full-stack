@@ -1,15 +1,14 @@
 <template>
     <ErrorHandler
-        :error-title="'Ooooops, page you are trying to access doesn\'t exist'"
-        navigate-to="'homePage'"
-        :navigate-text="'Navigate back to home'"
-        :status="404"
+        :error-title="'Ooooops, can\'t access this page!! Authentication Required'"
+        :navigate-to="'login'"
+        :navigate-text="'Login Now'"
+        :status="401"
     />
 </template>
 
 <script>
 import ErrorHandler from '@/components/ErrorHandler';
-
 export default {
     name: 'NotFoundPage',
     components: {
@@ -17,3 +16,5 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped></style>

@@ -87,9 +87,6 @@ export default {
         logoutUser() {
             this.$store.dispatch('auth/logoutUser');
         }
-    },
-    created() {
-        this.$store.dispatch('auth/getAuthUser');
     }
 };
 </script>
