@@ -1,11 +1,7 @@
 <template>
     <div class="dropdown is-pulled-right is-hoverable">
         <div class="dropdown-trigger">
-            <button
-                class="button"
-                aria-haspopup="true"
-                aria-controls="dropdown-menu"
-            >
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
                 <span>Change View</span>
                 <span class="icon is-small">
                     <i class="fas fa-angle-down" aria-hidden="true" />

@@ -7,11 +7,7 @@
                     <div class="level">
                         <div class="level-left">
                             <div class="level-item">
-                                <input
-                                    type="text"
-                                    class="input"
-                                    placeholder="New York"
-                                />
+                                <input type="text" class="input" placeholder="New York" />
                             </div>
                             <div class="level-item">
                                 <span>Meetups in New York, USA</span>
@@ -52,9 +48,7 @@
                             }"
                         >
                             <div class="meetup-card-find-content">
-                                <div
-                                    class="meetup-card-find-content-date is-pulled-right"
-                                >
+                                <div class="meetup-card-find-content-date is-pulled-right">
                                     <span class="month">{{
                                         meetup.startDate | formatTime('MMM')
                                     }}</span>
@@ -63,14 +57,10 @@
                                     }}</span>
                                 </div>
                                 <div class="meetup-card-find-content-info">
-                                    <p
-                                        class="title is-4 no-padding is-marginless mb-2"
-                                    >
+                                    <p class="title is-4 no-padding is-marginless mb-2">
                                         {{ meetup.title }}
                                     </p>
-                                    <span
-                                        class="tag is-success mb-2 text-captalize"
-                                    >
+                                    <span class="tag is-success mb-2 text-captalize">
                                         {{ meetup.category.name }}
                                     </span>
                                     <p class="subtitle is-7">

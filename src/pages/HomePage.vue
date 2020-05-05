@@ -18,11 +18,7 @@
                     </div>
                 </div>
                 <div v-if="meetups" class="row columns is-multiline">
-                    <MeetupItem
-                        v-for="meetup in meetups"
-                        :key="meetup.id"
-                        :meetup="meetup"
-                    />
+                    <MeetupItem v-for="meetup in meetups" :key="meetup.id" :meetup="meetup" />
                 </div>
                 <div
                     v-else
@@ -36,10 +32,7 @@
                     <h1 class="title">
                         Categories
                     </h1>
-                    <div
-                        v-if="categories"
-                        class="columns cover is-multiline is-mobile"
-                    >
+                    <div v-if="categories" class="columns cover is-multiline is-mobile">
                         <CategoryItem
                             v-for="category in categories"
                             :key="category.id"

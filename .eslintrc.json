@@ -22,6 +22,7 @@
     "rules": {
         "vue/html-indent": ["warn", 4],
         "vue/max-attributes-per-line": "off",
-        "vue/html-self-closing": "off"
+        "vue/html-self-closing": "off",
+        "no-debugger": "off"
     }
 }

@@ -1,9 +1,5 @@
 <template>
-    <nav
-        class="navbar is-spaced"
-        role="navigation"
-        aria-label="main navigation"
-    >
+    <nav class="navbar is-spaced" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <router-link class="navbar-item" :to="{ name: 'homePage' }">
                 <h1 class="brand-title title is-4">
@@ -23,7 +19,7 @@
             </a>
         </div>
 
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu is-active">
             <div class="navbar-start">
                 <router-link :to="{ name: 'findMeetups' }">
                     Find
@@ -52,29 +48,50 @@
             </div>
 
             <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <router-link
-                            :to="{ name: 'signup' }"
-                            class="button is-primary"
-                        >
-                            <strong>Sign up</strong>
-                        </router-link>
-                        <router-link
-                            :to="{ name: 'login' }"
-                            class="button is-light"
-                        >
-                            Log in
-                        </router-link>
+                <template v-if="user">
+                    <div class="mr-2">Welcome {{ user.username }}</div>
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link">
+                            Account
+                        </a>
+                        <div class="navbar-dropdown">
+                            <a href="#" class="navbar-item">
+                                Profile
+                            </a>
+                            <hr class="navbar-divider" />
+                            <a class="navbar-item" @click="logoutUser">
+                                Logout
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </template>
+
+                <template v-else>
+                    <router-link :to="{ name: 'signup' }" class="button is-primary mr-2">
+                        <strong>Sign up</strong>
+                    </router-link>
+                    <router-link :to="{ name: 'login' }" class="button is-light">
+                        Log in
+                    </router-link>
+                </template>
             </div>
         </div>
     </nav>
 </template>
 
 <script>
-export default {};
+import { mapGetters } from 'vuex';
+export default {
+    computed: mapGetters('auth', ['user']),
+    methods: {
+        logoutUser() {
+            this.$store.dispatch('auth/logoutUser');
+        }
+    },
+    created() {
+        this.$store.dispatch('auth/getAuthUser');
+    }
+};
 </script>
 
 <style scoped>

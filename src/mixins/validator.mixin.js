@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import _ from 'lodash';
-import { validateStatus } from '@/uitls/utils';
+import validator from '@/uitls/validator';
 
 const validate = Symbol().toString();
 
@@ -12,9 +12,7 @@ export default {
     },
     computed: {
         validator_buttonIsDisabled() {
-            return Object.values(this.validator_errors).some(
-                item => item.status
-            );
+            return Object.values(this.validator_errors).some(item => item.status);
         }
     },
     created() {
@@ -31,11 +29,19 @@ export default {
     },
     methods: {
         [validate](name) {
-            Vue.set(
-                this.validator_errors,
-                name,
-                validateStatus(name, this.formData)
-            );
+            const { validator_errors, formData } = this;
+            Vue.set(validator_errors, name, validator(name, formData));
+            if (
+                name === 'password' &&
+                formData.confirmPassword &&
+                formData.confirmPassword !== null
+            ) {
+                Vue.set(
+                    validator_errors,
+                    'confirmPassword',
+                    validator('confirmPassword', formData)
+                );
+            }
         },
         validator_handleChange({ target: { name, value } }) {
             Vue.set(this.formData, name, value.trim());

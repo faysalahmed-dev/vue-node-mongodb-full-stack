@@ -15,10 +15,7 @@
                                 <p
                                     class="image is-64x64 overflow-hidden rounded-circle avter-image"
                                 >
-                                    <img
-                                        :src="meetup.image"
-                                        :alt="meetup.title"
-                                    />
+                                    <img :src="meetup.image" :alt="meetup.title" />
                                 </p>
                             </figure>
                             <div class="media-content">
@@ -81,10 +78,7 @@
                                     Threads
                                 </p>
                                 <ul v-if="threads">
-                                    <li
-                                        v-for="thread in threads"
-                                        :key="thread.id"
-                                    >
+                                    <li v-for="thread in threads" :key="thread.id">
                                         {{ thread.title }}
                                     </li>
                                 </ul>
@@ -139,11 +133,7 @@
                                     Threads
                                 </h3>
                                 <template v-if="threads">
-                                    <div
-                                        class="box"
-                                        v-for="thread in threads"
-                                        :key="thread.id"
-                                    >
+                                    <div class="box" v-for="thread in threads" :key="thread.id">
                                         <!-- Thread title -->
                                         <h4 id="const" class="title is-3">
                                             {{ thread.title }}
@@ -171,9 +161,7 @@
                                             v-for="post in thread.posts"
                                             :key="post.id"
                                         >
-                                            <figure
-                                                class="media-left is-rounded user-image"
-                                            >
+                                            <figure class="media-left is-rounded user-image">
                                                 <p class="image is-32x32">
                                                     <img
                                                         class="is-rounded"
@@ -190,20 +178,11 @@
                                                         </strong>
                                                         {{ ' ' }}
                                                         <!-- Post Updated at -->
-                                                        <small
-                                                            class="post-time"
-                                                        >
-                                                            {{
-                                                                post.updatedAt
-                                                                    | formatTime(
-                                                                        'LLL'
-                                                                    )
-                                                            }}
+                                                        <small class="post-time">
+                                                            {{ post.updatedAt | formatTime('LLL') }}
                                                         </small>
                                                         <br />
-                                                        <p
-                                                            class="post-content-message"
-                                                        >
+                                                        <p class="post-content-message">
                                                             {{ post.text }}
                                                         </p>
                                                     </div>
@@ -220,10 +199,7 @@
                                 >
                                     <Spiner />
                                 </div>
-                                <p
-                                    v-if="threads && threads < 1"
-                                    class="p-4 text-center size-4"
-                                >
+                                <p v-if="threads && threads < 1" class="p-4 text-center size-4">
                                     no threads found
                                 </p>
                             </div>
@@ -233,10 +209,7 @@
                 </div>
             </section>
         </template>
-        <div
-            v-else
-            class="spiner-container d-flex justify-content-center align-items-center"
-        >
+        <div v-else class="spiner-container d-flex justify-content-center align-items-center">
             <Spiner />
         </div>
     </div>
@@ -299,10 +272,7 @@ export default {
         background-color: white;
         border: 1px solid rgba(46, 62, 72, 0.12);
         color: white;
-        background-image: linear-gradient(
-                rgba(0, 0, 0, 0.4),
-                rgba(0, 0, 0, 0.4)
-            ),
+        background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
             url('https://images.unsplash.com/photo-1531263060782-b024de9b9793?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1650&q=80');
         background-size: cover;
         background-repeat: no-repeat;

@@ -5,10 +5,7 @@
                 <h1 class="title">
                     Ooooops, page you are trying to access doesn't exist'
                 </h1>
-                <router-link
-                    :to="{ name: 'homePage' }"
-                    class="button is-primary"
-                >
+                <router-link :to="{ name: 'homePage' }" class="button is-primary">
                     Navigate back Home
                 </router-link>
             </div>

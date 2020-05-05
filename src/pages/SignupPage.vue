@@ -13,7 +13,7 @@
                         <figure class="avatar">
                             <img src="https://placehold.it/128x128" />
                         </figure>
-                        <form>
+                        <form autocomplete="off">
                             <InputGroup
                                 name="username"
                                 placeholder="Your User Name"
@@ -37,13 +37,6 @@
                                 :errors="validator_errors['email']"
                             />
                             <InputGroup
-                                name="avatar"
-                                placeholder="Your Avatar"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['avatar']"
-                            />
-                            <InputGroup
                                 type="password"
                                 name="password"
                                 placeholder="Your Password"
@@ -62,9 +55,7 @@
                             <button
                                 class="button is-block is-info is-large is-fullwidth"
                                 :disabled="validator_buttonIsDisabled"
-                                @click.prevent="
-                                    validator_onSubmit(handleSignup)
-                                "
+                                @click.prevent="validator_onSubmit(handleSignup)"
                             >
                                 Register
                             </button>
@@ -98,7 +89,6 @@ export default {
                 name: null,
                 username: null,
                 email: null,
-                avatar: null,
                 password: null,
                 confirmPassword: null
             }
@@ -107,7 +97,7 @@ export default {
     methods: {
         ...mapActions('auth', ['signupUser']),
         handleSignup() {
-            console.log('handle signup');
+            this.signupUser(this.formData);
         }
     },
     components: { InputGroup }
@@ -134,8 +124,7 @@ export default {
     padding: 5px;
     background: #fff;
     border-radius: 50%;
-    -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1),
-        0 0 0 1px rgba(10, 10, 10, 0.1);
+    -webkit-box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
 }
 input {
