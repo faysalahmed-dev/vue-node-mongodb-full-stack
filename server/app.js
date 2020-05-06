@@ -1,9 +1,10 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const passport = require('passport');
-const expressSession = require('express-session');
-const MongodbStore = require('connect-mongodb-session')(expressSession);
-const moment = require('moment');
+require('./passport/passport')(passport);
+// const expressSession = require('express-session');
+// const MongodbStore = require('connect-mongodb-session')(expressSession);
+// const moment = require('moment');
 const sendResponse = require('./utils/sendResponse');
 
 const meetupsRoutes = require('./routes/meetups'),
@@ -18,11 +19,12 @@ app.use(require('morgan')('dev'));
 
 app.use(bodyParser.json());
 
+/*
+ => only for session auth
 const store = new MongodbStore({
     uri: process.env.DB_URL,
     collection: 'meetupSessions'
 });
-
 app.use(
     expressSession({
         secret: process.env.session_key,
@@ -36,8 +38,7 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-require('./passport/passport')(passport);
-
+*/
 app.use('/api/v1/meetups', meetupsRoutes);
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/posts', postsRoutes);

@@ -1,15 +1,8 @@
 const mongoose = require('mongoose');
-const config = require('./config/dev.js');
 const app = require('./app');
 
-// require('./models/meetups');
-// require('./models/users');
-// require('./models/threads');
-// require('./models/posts');
-// require('./models/categories');
-
 mongoose
-    .connect(config.DB_URI, {
+    .connect(process.env.DB_URL, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         poolSize: 50,

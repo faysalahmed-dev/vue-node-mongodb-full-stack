@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const httpError = require('http-errors');
+
 const { transformObj } = require('../utils/utils');
 const constains = require('../utils/constains');
 const isEmail = require('validator/lib/isEmail');
-
-const Schema = mongoose.Schema;
-//const Meetup = require('./meetups');
-//const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 
 const userSchema = new Schema(
     {
@@ -44,6 +43,7 @@ const userSchema = new Schema(
             required: 'Password is required',
             select: false
         },
+        changePasswordAt: Date,
         info: String,
         joinedMeetups: [{ type: Schema.Types.ObjectId, ref: 'Meetup' }]
     },
@@ -54,23 +54,19 @@ const userSchema = new Schema(
     }
 );
 
-userSchema.pre('save', function(next) {
-    const user = this;
-
-    bcrypt.genSalt(10, function(err, salt) {
-        if (err) {
-            return next(err);
+userSchema.pre('save', async function(next) {
+    try {
+        if (this.isModified('password')) {
+            const salt = await bcrypt.genSalt(12);
+            this.password = await bcrypt.hash(this.password, salt);
         }
 
-        bcrypt.hash(user.password, salt, function(err, hash) {
-            if (err) {
-                return next(err);
-            }
+        if (this.isModified('password') && !this.isNew) this.changePasswordAt = Date.now();
 
-            user.password = hash;
-            next();
-        });
-    });
+        next();
+    } catch (err) {
+        next(httpError(500, 'something went wrong'));
+    }
 });
 
 //Every user have acces to this methods
@@ -82,6 +78,30 @@ userSchema.virtual('id').get(function() {
     return this._id.toHexString();
 });
 
+userSchema.methods.passwordIsChange = function(JWTTimeStamp) {
+    if (this.changePasswordAt) {
+        const changeTimpStamp = parseInt(this.changePasswordAt.getTime(), 10) / 1000;
+        return JWTTimeStamp < changeTimpStamp;
+    }
+    // false mean password not change;
+    return false;
+};
+
+userSchema.methods.genToken = function() {
+    return jwt.sign({ id: this._id, username: this.username }, process.env.JWT_SECRET, {
+        expiresIn: '7d'
+    });
+};
+
+userSchema.statics.verifyToken = function(userToken) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(userToken, process.env.JWT_SECRET, function(err, payload) {
+            if (err) reject(err);
+            else resolve(payload);
+        });
+    });
+};
+
 userSchema.methods.toJSON = transformObj;
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = model('User', userSchema);

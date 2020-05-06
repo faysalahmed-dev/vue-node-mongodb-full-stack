@@ -14,15 +14,7 @@
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "eslint": "eslint --ext .js,.vue --fix src/",
-        "start-server": "nodemon server/index.js --watch server/ --ext .js"
-    },
-    "nodemonConfig": {
-        "env": {
-            "NODE_ENV": "development",
-            "DB_URL": "mongodb://127.0.0.1:27017/meetuper",
-            "PORT": "3001",
-            "session_key": "super_secret_key"
-        }
+        "start-server": "env-cmd -f ./server/config/.env nodemon server/index.js --watch server/ --ext .js"
     },
     "dependencies": {
         "algoliasearch": "^4.2.0",
@@ -33,6 +25,7 @@
         "cache-loader": "^4.1.0",
         "connect-mongodb-session": "^2.3.1",
         "core-js": "^3.6.4",
+        "env-cmd": "^10.1.0",
         "express": "^4.17.1",
         "express-jwt": "^5.3.3",
         "express-session": "^1.17.1",

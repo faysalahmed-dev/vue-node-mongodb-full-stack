@@ -1,4 +1,4 @@
-const passpost = require('passport');
+const _ = require('lodash');
 const User = require('../models/users');
 const catchError = require('../utils/catchError');
 const sendResponse = require('../utils/sendResponse');
@@ -14,26 +14,29 @@ exports.authUser = catchError(async (req, res, next) => {
     sendResponse(res, 200, { data: req.user });
 });
 
-exports.signup = (req, res, next) => {
-    passpost.authenticate('sign-up', (err, user) => {
-        if (err) return next(err);
-        req.login(user, err => {
-            if (err) return next(err);
+exports.signup = catchError(async (req, res, next) => {
+    const hasUser = await User.findOne({ email: req.body.email.toLowerCase() });
+    if (hasUser) return next(httpError(403, 'user already exits'));
 
-            sendResponse(res, 201, { data: user });
-        });
-    })(req, res, next);
-};
+    const userData = _.pick(req.body, ['name', 'username', 'email', 'password']);
+    const user = await User.create(userData);
+    sendResponse(res, 201, { data: user, token: user.genToken() });
+});
 
-exports.login = (req, res, next) => {
-    passpost.authenticate('login', (err, user) => {
-        if (err) return next(err);
-        req.login(user, err => {
-            if (err) return next(err);
-            sendResponse(res, 200, { data: user });
-        });
-    })(req, res, next);
-};
+exports.login = catchError(async (req, res, next) => {
+    const { email, password } = req.body;
+    // find the user by email address
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
+    // if no user found
+    if (!user) return next(httpError(403, 'no user found'));
+
+    // if user found check password is match
+    const isMatch = await User.comparePassword(password, user.password);
+    // if password is match return user data with token
+    if (isMatch) return sendResponse(res, 200, { data: user, token: user.genToken() });
+    // else user password not match send error message
+    return sendResponse(res, 401, { message: 'invalid eamil and password' });
+});
 
 exports.logout = (req, res) => {
     req.logout();
