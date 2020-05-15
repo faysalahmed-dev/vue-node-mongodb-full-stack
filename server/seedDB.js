@@ -21,9 +21,7 @@ class DB {
     async cleanDb() {
         for (let model of this.models) {
             await model.deleteMany({}, () => {});
-            console.log(
-                `Data for model ${model.collection.collectionName} Deleted!`
-            );
+            console.log(`Data for model ${model.collection.collectionName} Deleted!`);
         }
     }
 
