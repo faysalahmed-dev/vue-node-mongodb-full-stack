@@ -14,9 +14,13 @@ export default {
     },
     actions: {
         async fetchCategories({ state, commit }) {
-            const res = await get('categories');
-            commit(_SET_CATEGORIES, res.data);
-            return state;
+            try {
+                const res = await get('categories');
+                commit(_SET_CATEGORIES, res.data.data);
+                return state;
+            } catch (err) {
+                console.log(err.response);
+            }
         }
     }
 };

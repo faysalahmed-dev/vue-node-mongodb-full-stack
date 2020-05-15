@@ -9,12 +9,23 @@
                     </h1>
                     <div class="column">
                         <AppDropDown />
-                        <button class="button is-primary mr-2 is-pulled-right">
+                        <b-button
+                            type="is-primary"
+                            tag="router-link"
+                            class="mr-2 is-pulled-right"
+                            :to="{ name: 'meetupCreate' }"
+                            v-if="isAuthenticated"
+                        >
                             Create Meetups
-                        </button>
-                        <button class="button is-primary  mr-2 is-pulled-right">
+                        </b-button>
+                        <b-button
+                            type="is-primary"
+                            tag="router-link"
+                            class="mr-2 is-pulled-right"
+                            :to="{ name: 'findMeetups' }"
+                        >
                             All
-                        </button>
+                        </b-button>
                     </div>
                 </div>
                 <div v-if="meetups" class="row columns is-multiline">
@@ -63,7 +74,8 @@ export default {
     name: 'App',
     computed: mapGetters({
         meetups: 'meetups/meetups',
-        categories: 'categories'
+        categories: 'categories',
+        isAuthenticated: 'auth/isAuthenticated'
     }),
     methods: mapActions({
         fetchMeetups: 'meetups/fetchMeetups',
@@ -72,7 +84,6 @@ export default {
     }),
     components: { AppHero, AppDropDown, CategoryItem, MeetupItem },
     async created() {
-        // console.log(this.fetchThreads);
         this.fetchMeetups();
         this.fetchCategories();
     }

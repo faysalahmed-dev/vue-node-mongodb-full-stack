@@ -6,7 +6,7 @@
         <div class="card large">
             <div class="card-image">
                 <figure class="image is-4by3">
-                    <img :src="meetup.image" :alt="meetup.title" />
+                    <img :src="meetup.images[0] | buildImagePath" :alt="meetup.title" />
                 </figure>
             </div>
             <div class="card-content">
@@ -32,12 +32,13 @@
                             {{ meetup.category.name }}
                         </span>
                         <p class="subtitle is-7">
-                            {{ meetup.location }}
+                            {{ meetup.location.address }}, {{ meetup.location.city }},
+                            {{ meetup.location.country }}
                         </p>
                     </div>
                 </div>
                 <div class="content">
-                    {{ meetup.description }}
+                    {{ meetupDescriptions }}
                     <div class="background-icon">
                         <span class="icon-twitter" />
                     </div>
@@ -48,12 +49,20 @@
 </template>
 
 <script>
+import _ from 'lodash';
 export default {
     name: 'MeetupItem',
     props: {
         meetup: {
             type: Object,
             required: true
+        }
+    },
+    computed: {
+        meetupDescriptions() {
+            return _.truncate(this.meetup.descriptions, {
+                length: 100
+            });
         }
     }
 };

@@ -1,18 +1,19 @@
+import isJWT from 'validator/lib/isJWT';
 import * as http from '@/api/api';
-import router from '@/routes/index';
+import ls from '@/utils/localStorage';
 
 const SET_USER = Symbol('SET_USER').toString();
-const SET_AUTH_STATE_LOADING = Symbol('SET_AUTH_STATE_LOADING').toString();
+const SET_AUTH_STATE_LOADED = Symbol('SET_AUTH_STATE_LOADED').toString();
 
 export default {
     namespaced: true,
-    state: { user: null, authStateLoading: false },
+    state: { user: null, authStateLoaded: false },
     getters: {
         isAuthenticated(state) {
             return !!state.user;
         },
-        authStateLoading(state) {
-            return state.authStateLoading;
+        authStateLoaded(state) {
+            return state.authStateLoaded;
         },
         user(state) {
             return state.user;
@@ -22,50 +23,63 @@ export default {
         [SET_USER](state, userData) {
             state.user = userData;
         },
-        [SET_AUTH_STATE_LOADING](state, isResolve = false) {
-            state.authStateLoading = isResolve;
+        [SET_AUTH_STATE_LOADED](state, isResolve = false) {
+            state.authStateLoaded = isResolve;
         }
     },
     actions: {
-        async loginUser({ commit }, data) {
+        async loginUser({ commit }, userInfo) {
             try {
-                const user = await http.post('users/login', data);
-                commit(SET_USER, user.data.data);
-                router.replace('/');
+                const {
+                    data: { data, token }
+                } = await http.post('users/login', userInfo);
+                ls.setToken(token);
+                commit(SET_USER, data);
+                return data;
             } catch (error) {
-                console.log(error.response);
+                return Promise.reject(error.response.data.message || 'some thing went wrong');
             }
         },
-        async signupUser({ commit }, data) {
+        async signupUser({ commit }, userInfo) {
             try {
-                const user = await http.post('users/signup', data);
-                commit(SET_USER, user.data.data);
-                router.replace('/');
+                const {
+                    data: { data, token }
+                } = await http.post('users/signup', userInfo);
+                ls.setToken(token);
+                commit(SET_USER, data);
+                return data;
             } catch (error) {
-                console.log(error.response);
+                const { data } = error.response;
+                if (data.error) {
+                    const err = Object.values(data.error);
+                    return Promise.reject(err);
+                }
+                return Promise.reject(data.message || 'some thing went wrong');
             }
         },
         async getAuthUser({ commit, getters }) {
-            if (getters.isAuthenticated) return Promise.resolve(getters.user);
+            const token = ls.getToken();
+            if (!token || !isJWT(token)) {
+                commit(SET_USER, null);
+                commit(SET_AUTH_STATE_LOADED, true);
+                return null;
+            }
+            if (getters.isAuthenticated) return getters.user;
             try {
                 const user = await http.get('users/auth-user');
                 commit(SET_USER, user.data.data);
-                commit(SET_AUTH_STATE_LOADING, true);
                 return user;
             } catch (error) {
                 console.log(error.response);
                 commit(SET_USER, null);
-                commit(SET_AUTH_STATE_LOADING, true);
                 return null;
+            } finally {
+                commit(SET_AUTH_STATE_LOADED, true);
             }
         },
-        async logoutUser({ commit }) {
-            try {
-                await http.get('users/logout');
-                commit(SET_USER, null);
-            } catch (err) {
-                console.log(err.response);
-            }
+        logoutUser({ commit }) {
+            ls.removeToken();
+            commit(SET_USER, null);
         }
     }
 };

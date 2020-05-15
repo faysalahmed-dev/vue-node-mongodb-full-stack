@@ -13,7 +13,6 @@ yarn-error.log*
 
 # Editor directories and files
 .idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj
@@ -21,4 +20,7 @@ yarn-error.log*
 *.sw?
 
 server/config
+resources
+todo.txt
+uploads
 

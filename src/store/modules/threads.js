@@ -11,9 +11,13 @@ export default {
     },
     actions: {
         async fetchThreads({ state, commit }, threadsId) {
-            const res = await get(`threads?meetupId=${threadsId}`);
-            commit(_SET_THREADS, res.data);
-            return state;
+            try {
+                const res = await get(`threads?meetupId=${threadsId}`);
+                commit(_SET_THREADS, res.data);
+                return state;
+            } catch (err) {
+                console.log(err.response);
+            }
         }
     }
 };

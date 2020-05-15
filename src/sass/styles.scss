@@ -1,4 +1,5 @@
-@import '~bulma/bulma';
+@import '~buefy/dist/buefy.css';
+// @import '~@mdi/font/css/materialdesignicons.min.css';
 @import 'spiner/three-dots.scss';
 @import '../assets/css/utils.css';
 
@@ -24,4 +25,14 @@ body {
     min-height: 100vh;
     display:flex;
     flex-direction: column;
+}
+.field {
+    .help.is-danger {
+        font-size: 15px;
+        text-transform: capitalize;
+    }
+}
+input,button,a,textarea {
+    font-family: var(--font-family);
+    font-size:inherit;
 }

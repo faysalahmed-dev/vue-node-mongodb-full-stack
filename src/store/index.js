@@ -33,16 +33,24 @@ export default new Vuex.Store({
     },
     actions: {
         async fetchThreads({ state, commit }, threadsId) {
-            commit(_SET_THREADS, null);
-            const res = await get(`threads?meetupId=${threadsId}`);
-            commit(_SET_THREADS, res.data);
-            return state;
+            try {
+                commit(_SET_THREADS, null);
+                const res = await get(`threads?meetupId=${threadsId}`);
+                commit(_SET_THREADS, res.data.data);
+                return state;
+            } catch (err) {
+                console.log(err.response);
+            }
         },
         async fetchCategories({ state, commit }) {
-            commit(_SET_CATEGORIES, null);
-            const res = await get('categories');
-            commit(_SET_CATEGORIES, res.data);
-            return state;
+            try {
+                commit(_SET_CATEGORIES, null);
+                const res = await get('categories');
+                commit(_SET_CATEGORIES, res.data.data);
+                return state;
+            } catch (err) {
+                console.log(err.response);
+            }
         }
     },
     strict: true

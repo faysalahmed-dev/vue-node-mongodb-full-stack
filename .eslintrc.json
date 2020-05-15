@@ -1,4 +1,5 @@
 {
+    "root": true,
     "env": {
         "browser": true,
         "es6": true,
@@ -23,6 +24,7 @@
         "vue/html-indent": ["warn", 4],
         "vue/max-attributes-per-line": "off",
         "vue/html-self-closing": "off",
-        "no-debugger": "off"
+        "no-debugger": "off",
+        "vue/singleline-html-element-content-newline": "off"
     }
 }

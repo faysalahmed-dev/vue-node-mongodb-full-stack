@@ -11,54 +11,99 @@
                     </p>
                     <div class="box">
                         <figure class="avatar">
-                            <img src="https://placehold.it/128x128" />
+                            <img :src="require('@/assets/128x128.png')" />
                         </figure>
-                        <form autocomplete="off">
-                            <InputGroup
-                                name="username"
-                                placeholder="Your User Name"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['username']"
-                            />
-                            <InputGroup
-                                name="name"
-                                placeholder="Your Name"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['name']"
-                            />
-                            <InputGroup
-                                name="email"
-                                type="email"
-                                placeholder="Your Email"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['email']"
-                            />
-                            <InputGroup
-                                type="password"
-                                name="password"
-                                placeholder="Your Password"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['password']"
-                            />
-                            <InputGroup
-                                type="password"
-                                name="confirmPassword"
-                                placeholder="Type Password Again"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['confirmPassword']"
-                            />
-                            <button
-                                class="button is-block is-info is-large is-fullwidth"
-                                :disabled="validator_buttonIsDisabled"
-                                @click.prevent="validator_onSubmit(handleSignup)"
+
+                        <form class="text-left">
+                            <b-field
+                                label="Name"
+                                :type="{ 'is-danger': hasError('name').status }"
+                                :message="hasError('name').message"
                             >
-                                Register
-                            </button>
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your Name"
+                                    name="name"
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-field
+                                label="User Name"
+                                :type="{ 'is-danger': hasError('username').status }"
+                                :message="hasError('username').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your User Name"
+                                    name="username"
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-field
+                                label="Email"
+                                :type="{ 'is-danger': hasError('email').status }"
+                                :message="hasError('email').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your Email"
+                                    name="email"
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-field
+                                label="Password"
+                                :type="{ 'is-danger': hasError('password').status }"
+                                :message="hasError('password').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your Password"
+                                    type="password"
+                                    name="password"
+                                    password-reveal
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-field
+                                label="Confirm Password"
+                                :type="{ 'is-danger': hasError('confirmPassword').status }"
+                                :message="hasError('confirmPassword').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Re-Type password Again"
+                                    type="password"
+                                    name="confirmPassword"
+                                    size="is-medium"
+                                    password-reveal
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-button
+                                type="is-primary"
+                                :disabled="validator_buttonIsDisabled"
+                                expanded
+                                size="is-medium"
+                                @click.prevent="validator_onSubmit(handleSubmit)"
+                                :loading="isFormSubmiting"
+                            >
+                                Sign Up
+                            </b-button>
                         </form>
                     </div>
                     <p class="has-text-grey">
@@ -78,7 +123,6 @@
 <script>
 import { mapActions } from 'vuex';
 import formMixin from '@/mixins/validator.mixin';
-import InputGroup from '@/components/InputGroup';
 
 export default {
     name: 'Sign',
@@ -86,21 +130,55 @@ export default {
     data() {
         return {
             formData: {
-                name: null,
-                username: null,
-                email: null,
-                password: null,
-                confirmPassword: null
-            }
+                name: '',
+                username: '',
+                email: '',
+                password: '',
+                confirmPassword: ''
+            },
+            isFormSubmiting: false
         };
     },
     methods: {
         ...mapActions('auth', ['signupUser']),
-        handleSignup() {
-            this.signupUser(this.formData);
+        async handleSubmit() {
+            this.isFormSubmiting = true;
+            try {
+                await this.signupUser(this.formData);
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'successfully logged in',
+                    position: 'is-top',
+                    type: 'is-success'
+                });
+                this.$router.replace('/');
+            } catch (err) {
+                if (Array.isArray(err)) {
+                    const some = err.map(el => `<div class="text-right">${el}</div>`);
+                    this.$buefy.toast.open({
+                        duration: 5000,
+                        message: some.join(''),
+                        position: 'is-top-right',
+                        type: 'is-danger'
+                    });
+                } else {
+                    this.$buefy.toast.open({
+                        duration: 5000,
+                        message: err,
+                        position: 'is-top-right',
+                        type: 'is-danger'
+                    });
+                }
+            } finally {
+                this.isFormSubmiting = false;
+            }
         }
     },
-    components: { InputGroup }
+    computed: {
+        hasError() {
+            return field => this.validator[field].error;
+        }
+    }
 };
 </script>
 

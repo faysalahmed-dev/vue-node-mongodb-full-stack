@@ -1,82 +1,62 @@
 <template>
-    <nav class="navbar is-spaced" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
-            <router-link class="navbar-item" :to="{ name: 'homePage' }">
-                <h1 class="brand-title title is-4">
+    <b-navbar spaced fixed-top shadow>
+        <template slot="brand">
+            <b-navbar-item tag="router-link" class="mr-3" :to="{ name: 'homePage' }">
+                <h1 class="brand-title title is-4 has-text-primary">
                     VueMeetuper
                 </h1>
-            </router-link>
-            <a
-                role="button"
-                class="navbar-burger burger"
-                aria-label="menu"
-                aria-expanded="false"
-                data-target="navbarBasicExample"
-            >
-                <span aria-hidden="true" />
-                <span aria-hidden="true" />
-                <span aria-hidden="true" />
-            </a>
-        </div>
+            </b-navbar-item>
+        </template>
+        <template slot="start">
+            <b-navbar-item class="px-3" active tag="router-link" :to="{ name: 'findMeetups' }">
+                Find
+            </b-navbar-item>
+            <b-navbar-dropdown class="px-3" label="More" collapsible>
+                <b-navbar-item href="#">
+                    About
+                </b-navbar-item>
+                <b-navbar-item href="#">
+                    Contact
+                </b-navbar-item>
+            </b-navbar-dropdown>
+        </template>
 
-        <div id="navbarBasicExample" class="navbar-menu is-active">
-            <div class="navbar-start">
-                <router-link :to="{ name: 'findMeetups' }">
-                    Find
-                </router-link>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        More
-                    </a>
-
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item">
-                            About
-                        </a>
-                        <a class="navbar-item">
-                            Jobs
-                        </a>
-                        <a class="navbar-item">
-                            Contact
-                        </a>
-                        <hr class="navbar-divider" />
-                        <a class="navbar-item">
-                            Report an issue
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="navbar-end">
-                <template v-if="user">
-                    <div class="mr-2">Welcome {{ user.username }}</div>
-                    <div class="navbar-item has-dropdown is-hoverable">
-                        <a class="navbar-link">
-                            Account
-                        </a>
-                        <div class="navbar-dropdown">
-                            <a href="#" class="navbar-item">
-                                Profile
-                            </a>
-                            <hr class="navbar-divider" />
-                            <a class="navbar-item" @click="logoutUser">
-                                Logout
-                            </a>
-                        </div>
-                    </div>
-                </template>
-
-                <template v-else>
-                    <router-link :to="{ name: 'signup' }" class="button is-primary mr-2">
+        <template slot="end">
+            <template v-if="user">
+                <p class="mr-2">Welcome {{ user.username }}</p>
+                <b-navbar-dropdown label="Account" hoverable boxed>
+                    <b-navbar-item href="#">
+                        Profile
+                    </b-navbar-item>
+                    <b-navbar-item @click="logoutUser">
+                        Logout
+                    </b-navbar-item>
+                    <b-navbar-item href="#">
+                        Setting
+                    </b-navbar-item>
+                </b-navbar-dropdown>
+            </template>
+            <b-navbar-item tag="div" v-else>
+                <div class="buttons">
+                    <router-link
+                        v-if="$route.name !== 'signup'"
+                        :to="{ name: 'signup' }"
+                        class="button is-primary"
+                    >
                         <strong>Sign up</strong>
                     </router-link>
-                    <router-link :to="{ name: 'login' }" class="button is-light">
+                    <router-link
+                        v-if="$route.name !== 'login'"
+                        :to="{ name: 'login' }"
+                        class="button is-light"
+                        :class="[$route.name === 'signup' ? 'is-primary' : 'is-light']"
+                    >
                         Log in
                     </router-link>
-                </template>
-            </div>
-        </div>
-    </nav>
+                </div>
+            </b-navbar-item>
+        </template>
+    </b-navbar>
 </template>
 
 <script>

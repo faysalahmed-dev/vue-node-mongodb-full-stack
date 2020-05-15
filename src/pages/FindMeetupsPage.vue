@@ -44,7 +44,9 @@
                             class="meetup-card-find"
                             href="#"
                             :style="{
-                                'background-image': `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${meetup.image})`
+                                'background-image': `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${buildImagePath(
+                                    meetup.images[0]
+                                )})`
                             }"
                         >
                             <div class="meetup-card-find-content">
@@ -64,7 +66,8 @@
                                         {{ meetup.category.name }}
                                     </span>
                                     <p class="subtitle is-7">
-                                        {{ meetup.location }}
+                                        {{ meetup.location.address }}, {{ meetup.location.city }},
+                                        {{ meetup.location.country }}
                                     </p>
                                 </div>
                             </div>
@@ -99,7 +102,17 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
     name: 'FindMeetups',
     components: { AppHero },
-    computed: mapGetters('meetups', ['meetups']),
+    computed: {
+        ...mapGetters('meetups', ['meetups']),
+        buildImagePath() {
+            return value => {
+                if (value.startsWith('http' || 'https')) {
+                    return value;
+                }
+                return 'http://localhost:3001/' + value;
+            };
+        }
+    },
     methods: mapActions('meetups', ['fetchMeetups']),
     created() {
         this.fetchMeetups();

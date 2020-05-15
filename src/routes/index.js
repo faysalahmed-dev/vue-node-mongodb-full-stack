@@ -9,7 +9,7 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import FindMeetupsPage from '@/pages/FindMeetupsPage';
 import MeetupDetailsPage from '@/pages/MeetupDetailsPage';
 import AuthOnlyUserPage from '@/pages/AuthOnlyUserPage';
-import PrivateRouterPage from '@/pages/PrivateRouterPage';
+import MeetupCreatePage from '@/pages/MeetupCreatePage';
 
 Vue.use(VueRouter);
 
@@ -17,6 +17,12 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         { path: '/', name: 'homePage', component: HomePage },
+        {
+            path: '/meetup/create-new',
+            component: MeetupCreatePage,
+            name: 'meetupCreate',
+            meta: { requiresAuth: true }
+        },
         {
             path: '/meetup/:id',
             name: 'meetupDetails',
@@ -26,11 +32,6 @@ const router = new VueRouter({
             path: '/find-meetups',
             name: 'findMeetups',
             component: FindMeetupsPage
-        },
-        {
-            path: '/test',
-            component: PrivateRouterPage,
-            meta: { requiresAuth: true }
         },
         {
             path: '/login',
@@ -47,7 +48,8 @@ const router = new VueRouter({
         {
             path: '/401',
             name: 'authUserOnly',
-            component: AuthOnlyUserPage
+            component: AuthOnlyUserPage,
+            meta: { publicUserOnly: true }
         },
         {
             path: '*',
@@ -57,17 +59,16 @@ const router = new VueRouter({
     ]
 });
 
-router.beforeEach((to, form, next) => {
-    store.dispatch('auth/getAuthUser').then(() => {
-        const isAuthenticated = store.getters['auth/isAuthenticated'];
-        if (to.meta.publicUserOnly && isAuthenticated) {
-            return next({ name: 'homePage' });
-        }
-        if (to.meta.requiresAuth && !isAuthenticated) {
-            return next({ name: 'authUserOnly' });
-        }
-        next();
-    });
+router.beforeEach(async (to, form, next) => {
+    await store.dispatch('auth/getAuthUser');
+    const isAuthenticated = store.getters['auth/isAuthenticated'];
+    if (to.meta.publicUserOnly && isAuthenticated) {
+        return next({ name: 'homePage' });
+    }
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        return next({ name: 'authUserOnly' });
+    }
+    next();
 });
 
 export default router;

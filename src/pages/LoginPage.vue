@@ -11,31 +11,51 @@
                     </p>
                     <div class="box">
                         <figure class="avatar">
-                            <img src="https://placehold.it/128x128" />
+                            <img :src="require('@/assets/128x128.png')" />
                         </figure>
-                        <form>
-                            <InputGroup
-                                name="email"
-                                placeholder="Your Email"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['email']"
-                            />
-                            <InputGroup
-                                type="password"
-                                name="password"
-                                placeholder="Your Password"
-                                :handle-change="validator_handleChange"
-                                :handle-blur="validator_handleBlur"
-                                :errors="validator_errors['password']"
-                            />
-                            <button
+
+                        <form class="text-left">
+                            <b-field
+                                label="Email"
+                                :type="{ 'is-danger': hasError('email').status }"
+                                :message="hasError('email').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your Email"
+                                    name="email"
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+
+                            <b-field
+                                label="Password"
+                                :type="{ 'is-danger': hasError('password').status }"
+                                :message="hasError('password').message"
+                            >
+                                <b-input
+                                    @input.native="validator_handleChange"
+                                    @blur="validator_handleBlur"
+                                    placeholder="Your Password"
+                                    type="password"
+                                    name="password"
+                                    password-reveal
+                                    size="is-medium"
+                                    icon-pack="fas"
+                                ></b-input>
+                            </b-field>
+                            <b-button
+                                type="is-primary"
                                 :disabled="validator_buttonIsDisabled"
+                                expanded
+                                size="is-medium"
                                 @click.prevent="validator_onSubmit(handleSubmit)"
-                                class="button is-block is-info is-large is-fullwidth"
+                                :loading="isFormSubmiting"
                             >
                                 Login
-                            </button>
+                            </b-button>
                         </form>
                     </div>
                     <p class="has-text-grey">
@@ -54,31 +74,54 @@
 
 <script>
 import { mapActions } from 'vuex';
-import formMixin from '@/mixins/validator.mixin';
-import InputGroup from '@/components/InputGroup';
+import validatorMixin from '@/mixins/validator.mixin';
 
 export default {
     name: 'Login',
-    mixins: [formMixin],
+    mixins: [validatorMixin],
     data() {
         return {
             formData: {
-                email: null,
-                password: null
-            }
+                email: '',
+                password: ''
+            },
+            isFormSubmiting: false
         };
     },
     methods: {
         ...mapActions('auth', ['loginUser']),
-        handleSubmit() {
-            this.loginUser(this.formData);
+        async handleSubmit() {
+            this.isFormSubmiting = true;
+            try {
+                await this.loginUser(this.formData);
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'successfully logged in',
+                    position: 'is-top',
+                    type: 'is-success'
+                });
+                this.$router.replace('/');
+            } catch (err) {
+                this.$buefy.toast.open({
+                    duration: 5000,
+                    message: err,
+                    position: 'is-top-right',
+                    type: 'is-danger'
+                });
+            } finally {
+                this.isFormSubmiting = false;
+            }
         }
     },
-    components: { InputGroup }
+    computed: {
+        hasError() {
+            return field => this.validator[field].error;
+        }
+    }
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .hero.is-success {
     background: #f2f6fa;
 }

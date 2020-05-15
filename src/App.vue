@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <template v-if="authStateLoading">
+        <template v-if="authStateLoaded">
             <TheNavbar />
             <div class="flex-grow-1 d-flex flex-column">
                 <router-view />
@@ -25,11 +25,15 @@ export default {
         TheFooter,
         Spinner
     },
-    computed: mapGetters('auth', ['authStateLoading'])
+    computed: mapGetters('auth', ['authStateLoaded'])
 };
 </script>
 
 <style lang="scss">
+.toast {
+    //margin-top: 4rem !important;
+    text-transform: capitalize;
+}
 .bold {
     font-weight: bold;
 }

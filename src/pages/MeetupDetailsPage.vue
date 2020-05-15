@@ -15,7 +15,10 @@
                                 <p
                                     class="image is-64x64 overflow-hidden rounded-circle avter-image"
                                 >
-                                    <img :src="meetup.image" :alt="meetup.title" />
+                                    <img
+                                        :src="meetup.images[0] | buildImagePath"
+                                        :alt="meetup.title"
+                                    />
                                 </p>
                             </figure>
                             <div class="media-content">
@@ -58,7 +61,11 @@
                                     <div class="meetup-side-box-place mb-2">
                                         <p><b>How to find us</b></p>
                                         <!-- TODO: meetup location -->
-                                        <p>{{ meetup.location }}</p>
+                                        <p>
+                                            {{ meetup.location.address }},
+                                            {{ meetup.location.city }},
+                                            {{ meetup.location.country }}
+                                        </p>
                                     </div>
                                     <div class="meetup-side-box-more-info">
                                         <p><b>Additional Info</b></p>
@@ -117,7 +124,7 @@
                                 </h3>
                                 <!-- TODO: meetup description -->
                                 <p>
-                                    {{ meetup.description }}
+                                    {{ meetup.descriptions }}
                                     <!-- Join Meetup, We will handle it later (: -->
                                     <button class="button is-primary">
                                         Join In
@@ -209,6 +216,7 @@
                 </div>
             </section>
         </template>
+        <ErrorHandler v-else-if="meetupNotFoundError" :error-title="meetupNotFoundError.message" />
         <div v-else class="spiner-container d-flex justify-content-center align-items-center">
             <Spiner />
         </div>
@@ -216,17 +224,22 @@
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import ErrorHandler from '@/components/ErrorHandler';
 
 export default {
     name: 'MeetupDetailsPage',
+    data() {
+        return {
+            meetupNotFoundError: null
+        };
+    },
     computed: {
         ...mapGetters({
             meetup: 'meetups/meetup',
             threads: 'threads'
         }),
         creatorName() {
-            const creator = this.meetup.meetupCreator;
-            return creator ? creator.name : '';
+            return this.meetup.meetupCreator.name;
         },
         bindClass() {
             const classes = [
@@ -245,9 +258,15 @@ export default {
     }),
     created() {
         const { id } = this.$route.params;
-        this.fetchMeetup(id);
+        this.fetchMeetup(id).catch(err => {
+            this.meetupNotFoundError = {
+                status: true,
+                message: err
+            };
+        });
         this.fetchThreads(id);
-    }
+    },
+    components: { ErrorHandler }
 };
 </script>
 

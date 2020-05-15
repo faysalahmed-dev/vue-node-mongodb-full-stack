@@ -1,46 +1,49 @@
 import Vue from 'vue';
 import _ from 'lodash';
-import validator from '@/uitls/validator';
+import validatorOpt from '@/utils/validator';
 
 const validate = Symbol().toString();
 
 export default {
     data() {
         return {
-            validator_errors: {}
+            validator: {}
         };
     },
     computed: {
         validator_buttonIsDisabled() {
-            return Object.values(this.validator_errors).some(item => item.status);
+            return Object.values(this.validator).some(item => item.error.status || !item.touched);
         }
     },
     created() {
         if (process.env.NODE_ENV === 'development' && !this.formData) {
             throw new Error('Form data is required for work validations mixin');
         }
-        this.validator_errors = _.transform(
+        this.validator = _.transform(
             this.formData,
-            (res, val, key) => {
-                res[key] = { status: true, message: '' };
+            (result, val, key) => {
+                result[key] = {
+                    error: { status: false, message: '' },
+                    touched: false
+                };
             },
             {}
         );
     },
     methods: {
         [validate](name) {
-            const { validator_errors, formData } = this;
-            Vue.set(validator_errors, name, validator(name, formData));
+            const { formData } = this;
+            this.validator[name].error = validatorOpt(name, formData);
+            if (!this.validator[name].touched) {
+                this.validator[name].touched = true;
+            }
+
             if (
                 name === 'password' &&
                 formData.confirmPassword &&
-                formData.confirmPassword !== null
+                this.validator.confirmPassword.touched
             ) {
-                Vue.set(
-                    validator_errors,
-                    'confirmPassword',
-                    validator('confirmPassword', formData)
-                );
+                this.validator.confirmPassword.error = validatorOpt('confirmPassword', formData);
             }
         },
         validator_handleChange({ target: { name, value } }) {
@@ -48,9 +51,9 @@ export default {
             this[validate](name);
         },
         validator_handleBlur({ target: { name } }) {
-            // if name is null it means => untouched so make it touch
-            if (this.formData[name] === null) {
-                Vue.set(this.formData, name, '');
+            //if name is null it means => untouched so make it touch
+            if (!this.validator[name].touched) {
+                this.validator[name].touched = true;
             }
             this[validate](name);
         },
