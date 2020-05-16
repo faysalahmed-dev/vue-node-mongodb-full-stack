@@ -7,14 +7,41 @@ exports.signupValidator = checkSchema({
     name: scheams.name,
     email: scheams.email,
     username: scheams.username,
-    password: scheams.password,
-    confirmPassword: scheams.confirmPassword
+    password: scheams.password
 });
 
 exports.loginValidator = checkSchema({
     email: scheams.email,
     password: scheams.password
 });
+
+exports.createMeetupValidator = checkSchema({
+    title: scheams.title,
+    'location.country': scheams.location.country,
+    'location.address': scheams.location.address,
+    'location.city': scheams.location.city,
+    'location.isoCode': scheams.location.isoCode,
+    startDate: scheams.startDate,
+    timeFrom: scheams.timeFrom,
+    timeTo: scheams.timeTo,
+    category: scheams.category,
+    shortInfo: scheams.shortInfo,
+    descriptions: scheams.descriptions
+});
+
+exports.transformMeetupCreateBody = (req, res, next) => {
+    if (!req.body.data) return next(httpError(400, 'please provied required field'));
+    if (!req.files || !Array.isArray(req.files) || req.files.length < 1) {
+        return next(httpError(400, 'please provied atlest 1 meetup image'));
+    }
+    if (req.files.length > 5) return next(httpError(400, 'max 5 image are allowed'));
+    if (typeof req.body.data === 'string') {
+        req.body = JSON.parse(req.body.data);
+    } else {
+        req.body = req.body.data;
+    }
+    next();
+};
 
 exports.validate = (req, res, next) => {
     const errors = validationResult(req).errors;

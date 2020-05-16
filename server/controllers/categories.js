@@ -1,11 +1,8 @@
 const Category = require('../models/categories');
+const catchError = require('../utils/catchError');
+const sendResponse = require('../utils/sendResponse');
 
-exports.getCategories = function(req, res) {
-    Category.find({}).exec((errors, categories) => {
-        if (errors) {
-            return res.status(422).send({ errors });
-        }
-
-        return res.json(categories);
-    });
-};
+exports.getCategories = catchError(async (req, res) => {
+    const categories = await Category.find({});
+    sendResponse(res, 200, { data: categories });
+});

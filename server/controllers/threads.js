@@ -1,20 +1,23 @@
 const Thread = require('../models/threads');
+const {
+    Types: { ObjectId }
+} = require('mongoose');
+const catchError = require('../utils/catchError');
+const sendResponse = require('../utils/sendResponse');
+const httpError = require('http-errors');
 
-exports.getThreads = function(req, res) {
-    const meetupId = req.query.meetupId;
+exports.getThreads = catchError(async (req, res, next) => {
+    const { meetupId } = req.query;
+    if (!ObjectId.isValid(meetupId)) {
+        return next(httpError(400, 'invalid meetup id'));
+    }
 
-    Thread.find({})
+    const thereads = await Thread.find({})
         .where({ meetup: meetupId })
         .populate({
             path: 'posts',
             options: { limit: 5, sort: { createdAt: -1 } },
             populate: { path: 'user' }
-        })
-        .exec((errors, threads) => {
-            if (errors) {
-                return res.status(422).send({ errors });
-            }
-
-            return res.json(threads);
         });
-};
+    sendResponse(res, 200, { data: thereads });
+});

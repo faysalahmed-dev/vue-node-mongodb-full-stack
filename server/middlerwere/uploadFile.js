@@ -37,10 +37,9 @@ exports.upload = multer({
         fields: 1,
         files: '1MB'
     }
-});
+}).array('images', 5);
 
 exports.resizeImage = catchError(async (req, res, next) => {
-    let now = Date.now();
     const { files } = req;
     if (!files || !Array.isArray(files) || files.length < 1)
         return next(httpError(400, 'meetup sholud have atlest 1 image'));
@@ -51,8 +50,5 @@ exports.resizeImage = catchError(async (req, res, next) => {
         img.resize(500, 500);
         await img.writeAsync(`uploads/${file.filename}`);
     });
-    // for await (const file of req.files) {     
-    // }
-    console.log('time take : ',Date.now() - now);
     next();
 });

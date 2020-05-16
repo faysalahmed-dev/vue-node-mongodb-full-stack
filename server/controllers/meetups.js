@@ -1,33 +1,55 @@
 const Meetup = require('../models/meetups');
+const _ = require('lodash');
+const countryData = require('../utils/country-data');
+const {
+    Types: { ObjectId }
+} = require('mongoose');
+const catchError = require('../utils/catchError');
+const sendResponse = require('../utils/sendResponse');
+const httpError = require('http-errors');
 
-exports.getMeetups = function(req, res) {
-    Meetup.find({})
+exports.getMeetups = catchError(async (req, res) => {
+    const meetup = await Meetup.find({})
         .populate('category')
-        .populate('joinedPeople')
-        .exec((errors, meetups) => {
-            if (errors) {
-                return res.status(422).send({ errors });
-            }
+        .populate('joinedPeople');
 
-            return res.json(meetups);
-        });
-};
+    sendResponse(res, 200, { data: meetup });
+});
 
-exports.getMeetupById = function(req, res) {
+exports.getMeetupById = catchError(async (req, res, next) => {
     const { id } = req.params;
+    if (!ObjectId.isValid(id)) {
+        return next(httpError(400, 'invalid meetup id'));
+    }
 
-    Meetup.findById(id)
+    const meetup = await Meetup.findById(id)
         .populate('meetupCreator', 'name id avatar')
         .populate('category')
         .populate({
             path: 'joinedPeople',
             options: { limit: 5, sort: { username: -1 } }
-        })
-        .exec((errors, meetup) => {
-            if (errors) {
-                return res.status(422).send({ errors });
-            }
-
-            return res.json(meetup);
         });
-};
+
+    if (!meetup) return next(httpError(404, 'meetup not found'));
+    sendResponse(res, 200, { data: meetup });
+});
+
+exports.createMeetup = catchError(async (req, res) => {
+    const meetupFromBody = _.pick(req.body, [
+        'title',
+        'location',
+        'timeFrom',
+        'timeTo',
+        'category',
+        'descriptions',
+        'shortInfo',
+        'startDate'
+    ]);
+
+    meetupFromBody.images = _.map(req.files, 'filename');
+    meetupFromBody.location.country = countryData[meetupFromBody.location.isoCode].country;
+    meetupFromBody.meetupCreator = req.user.id;
+
+    const meetup = await Meetup.create(meetupFromBody);
+    sendResponse(res, 201, { data: meetup });
+});
