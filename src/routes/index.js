@@ -6,9 +6,9 @@ import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import SignupPage from '@/pages/SignupPage';
 import NotFoundPage from '@/pages/NotFoundPage';
-import FindMeetupsPage from '@/pages/FindMeetupsPage';
+import MeetupsFindPage from '@/pages/MeetupsFindPage';
 import MeetupDetailsPage from '@/pages/MeetupDetailsPage';
-import AuthOnlyUserPage from '@/pages/AuthOnlyUserPage';
+import AuthUserOnlyPage from '@/pages/AuthUserOnlyPage';
 import MeetupCreatePage from '@/pages/MeetupCreatePage';
 
 Vue.use(VueRouter);
@@ -20,40 +20,40 @@ const router = new VueRouter({
         {
             path: '/meetup/create-new',
             component: MeetupCreatePage,
-            name: 'meetupCreate',
+            name: 'meetupCreatePage',
             meta: { requiresAuth: true }
         },
         {
-            path: '/meetup/:id',
-            name: 'meetupDetails',
+            path: '/meetup/:meetupSlug',
+            name: 'meetupDetailsPage',
             component: MeetupDetailsPage
         },
         {
             path: '/find-meetups',
-            name: 'findMeetups',
-            component: FindMeetupsPage
+            name: 'meetupsFindPage',
+            component: MeetupsFindPage
         },
         {
             path: '/login',
-            name: 'login',
+            name: 'loginPage',
             component: LoginPage,
             meta: { publicUserOnly: true }
         },
         {
             path: '/signup',
-            name: 'signup',
+            name: 'signupPage',
             component: SignupPage,
             meta: { publicUserOnly: true }
         },
         {
             path: '/401',
-            name: 'authUserOnly',
-            component: AuthOnlyUserPage,
+            name: 'authUserOnlyPage',
+            component: AuthUserOnlyPage,
             meta: { publicUserOnly: true }
         },
         {
             path: '*',
-            name: 'pageNotFound',
+            name: 'notFoundPage',
             component: NotFoundPage
         }
     ]
@@ -66,7 +66,7 @@ router.beforeEach(async (to, form, next) => {
         return next({ name: 'homePage' });
     }
     if (to.meta.requiresAuth && !isAuthenticated) {
-        return next({ name: 'authUserOnly' });
+        return next({ name: 'authUserOnlyPage' });
     }
     next();
 });

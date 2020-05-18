@@ -62,9 +62,9 @@ export default {
             Object.values(data).forEach(el => {
                 const byCountryName = el.country.toLowerCase();
                 const byCode = el.isoCode.toLowerCase();
-                if (byCode.indexOf(this.search) !== -1) {
+                if (byCode.indexOf(this.search.toLowerCase()) !== -1) {
                     byCodeFilter.push(el);
-                } else if (byCountryName.indexOf(this.search) !== -1) {
+                } else if (byCountryName.indexOf(this.search.toLowerCase()) !== -1) {
                     byCountryFilter.push(el);
                 }
             });

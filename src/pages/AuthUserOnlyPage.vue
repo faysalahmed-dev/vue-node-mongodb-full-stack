@@ -1,8 +1,8 @@
 <template>
     <ErrorHandler
-        :error-title="'Ooooops, can\'t access this page!! Authentication Required'"
-        :navigate-to="'login'"
-        :navigate-text="'Login Now'"
+        error-title="Ooooops, can't access this page!! Authentication Required"
+        navigate-to="loginPage"
+        navigate-text="Login Now"
         :status="401"
     />
 </template>

@@ -8,7 +8,7 @@
             </b-navbar-item>
         </template>
         <template slot="start">
-            <b-navbar-item class="px-3" active tag="router-link" :to="{ name: 'findMeetups' }">
+            <b-navbar-item class="px-3" active tag="router-link" :to="{ name: 'meetupsFindPage' }">
                 Find
             </b-navbar-item>
             <b-navbar-dropdown class="px-3" label="More" collapsible>
@@ -24,6 +24,9 @@
         <template slot="end">
             <template v-if="user">
                 <p class="mr-2">Welcome {{ user.username }}</p>
+                <figure class="image is-32x32 rounded overflow-hidden">
+                    <img :src="user.avatar | buildImagePath" />
+                </figure>
                 <b-navbar-dropdown label="Account" hoverable boxed>
                     <b-navbar-item href="#">
                         Profile
@@ -39,17 +42,17 @@
             <b-navbar-item tag="div" v-else>
                 <div class="buttons">
                     <router-link
-                        v-if="$route.name !== 'signup'"
-                        :to="{ name: 'signup' }"
+                        v-if="$route.name !== 'signupPage'"
+                        :to="{ name: 'signupPage' }"
                         class="button is-primary"
                     >
                         <strong>Sign up</strong>
                     </router-link>
                     <router-link
-                        v-if="$route.name !== 'login'"
-                        :to="{ name: 'login' }"
+                        v-if="$route.name !== 'loginPage'"
+                        :to="{ name: 'loginPage' }"
                         class="button is-light"
-                        :class="[$route.name === 'signup' ? 'is-primary' : 'is-light']"
+                        :class="[$route.name === 'signupPage' ? 'is-primary' : 'is-light']"
                     >
                         Log in
                     </router-link>

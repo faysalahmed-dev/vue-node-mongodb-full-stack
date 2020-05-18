@@ -13,7 +13,7 @@
                             type="is-primary"
                             tag="router-link"
                             class="mr-2 is-pulled-right"
-                            :to="{ name: 'meetupCreate' }"
+                            :to="{ name: 'meetupCreatePage' }"
                             v-if="isAuthenticated"
                         >
                             Create Meetups
@@ -22,7 +22,7 @@
                             type="is-primary"
                             tag="router-link"
                             class="mr-2 is-pulled-right"
-                            :to="{ name: 'findMeetups' }"
+                            :to="{ name: 'meetupsFindPage' }"
                         >
                             All
                         </b-button>

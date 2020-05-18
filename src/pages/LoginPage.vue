@@ -60,7 +60,7 @@
                     </div>
                     <p class="has-text-grey">
                         <a>Sign In With Google</a> &nbsp;·&nbsp;
-                        <router-link :to="{ name: 'signup' }">
+                        <router-link :to="{ name: 'signupPage' }">
                             Sign Up
                         </router-link>
                         &nbsp;·&nbsp;
@@ -100,7 +100,11 @@ export default {
                     position: 'is-top',
                     type: 'is-success'
                 });
-                this.$router.replace('/');
+                if (this.$route.query.redirect) {
+                    this.$router.replace(this.$route.query.redirect);
+                } else {
+                    this.$router.replace('/');
+                }
             } catch (err) {
                 this.$buefy.toast.open({
                     duration: 5000,

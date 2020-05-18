@@ -27,7 +27,7 @@ export default {
         },
         navigateTo: {
             type: String,
-            default: 'HomePage'
+            default: 'homePage'
         },
         navigateText: {
             type: String,

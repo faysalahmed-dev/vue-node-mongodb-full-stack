@@ -17,6 +17,12 @@ export default {
         },
         user(state) {
             return state.user;
+        },
+        isOwnerOfMeetup(state, { isAuthenticated }) {
+            return meetupCreateorId => isAuthenticated && state.user.id === meetupCreateorId;
+        },
+        userJoinedBefore(state, { isAuthenticated }) {
+            return meetupId => isAuthenticated && state.user.joinedMeetups.includes(meetupId);
         }
     },
     mutations: {
@@ -80,6 +86,16 @@ export default {
         logoutUser({ commit }) {
             ls.removeToken();
             commit(SET_USER, null);
+        },
+        meetupToUser({ commit, getters }, { type, meetupId }) {
+            const user = getters.user;
+            const joinedMeetups = [...user.joinedMeetups];
+            if (type === 'dec') joinedMeetups.pop(meetupId);
+            else joinedMeetups.push(meetupId);
+            commit(SET_USER, {
+                ...user,
+                joinedMeetups: [...joinedMeetups]
+            });
         }
     }
 };

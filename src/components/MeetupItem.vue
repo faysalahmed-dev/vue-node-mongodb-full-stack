@@ -1,6 +1,6 @@
 <template>
     <router-link
-        :to="{ name: 'meetupDetails', params: { id: meetup.id } }"
+        :to="{ name: 'meetupDetailsPage', params: { meetupSlug: meetup.slug } }"
         class="column is-one-third"
     >
         <div class="card large">

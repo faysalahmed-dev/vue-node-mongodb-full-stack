@@ -1,7 +1,10 @@
-import { get, post } from '@/api/api';
+import { get, post, patch, deleteOne } from '@/api/api';
+import Vue from 'vue';
+import { errorMesssage } from '@/utils/utils';
 import _ from 'lodash';
-const _SET_MEETUPS = 'SET_MEETUPS';
-const _SET_MEETUP = 'SET_MEETUP';
+const SET_MEETUPS = 'SET_MEETUPS';
+const SET_MEETUP = 'SET_MEETUP';
+const MEETUP_JOINED_PEOPLE = 'MEETUP_JOINED_PEOPLE';
 
 export default {
     namespaced: true,
@@ -14,30 +17,33 @@ export default {
         meetup: state => state.meetup
     },
     mutations: {
-        [_SET_MEETUPS]: (state, meetups) => (state.meetups = meetups),
-        [_SET_MEETUP]: (state, meetup) => (state.meetup = meetup)
+        [SET_MEETUPS]: (state, meetups) => (state.meetups = meetups),
+        [SET_MEETUP]: (state, meetup) => (state.meetup = meetup),
+        [MEETUP_JOINED_PEOPLE](state, joinedPeople) {
+            Vue.set(state.meetup, 'joinedPeople', joinedPeople);
+        }
     },
     actions: {
         async fetchMeetups({ state, commit }) {
             try {
-                commit(_SET_MEETUPS, null);
+                commit(SET_MEETUPS, null);
                 const res = await get('meetups');
-                commit(_SET_MEETUPS, res.data.data);
+                commit(SET_MEETUPS, res.data.data);
                 return state.meetups;
             } catch (err) {
                 console.log(err.response);
-                return Promise.reject(err.response.data.message);
+                return errorMesssage(err);
             }
         },
-        async fetchMeetup({ commit, state }, meetupId) {
+        async fetchMeetup({ commit, state }, meetupSlug) {
             try {
-                commit(_SET_MEETUP, null);
-                const res = await get(`meetups/${meetupId}`);
-                commit(_SET_MEETUP, res.data.data);
+                commit(SET_MEETUP, null);
+                const res = await get(`meetups/${meetupSlug}`);
+                commit(SET_MEETUP, res.data.data);
                 return state.meetup;
             } catch (err) {
                 console.log(err.response);
-                return Promise.reject(err.response.data.message);
+                return errorMesssage(err);
             }
         },
         async createMeetup(context, data) {
@@ -51,12 +57,45 @@ export default {
                 const res = await post('meetups/create-meetup', form);
                 return res.data.data;
             } catch (error) {
+                console.log(error.response);
                 const { data } = error.response;
                 if (data.error) {
                     const err = Object.values(data.error);
                     return Promise.reject(err);
                 }
-                return Promise.reject(data.message || 'some thing went wrong');
+            }
+        },
+        async joinMeetup({ getters, rootGetters, commit, dispatch }, meetupId) {
+            if (!getters.meetup || !rootGetters['auth/isAuthenticated']) return;
+            const user = rootGetters['auth/user'];
+            try {
+                const { data } = await patch(`meetups/${meetupId}/join`);
+                commit(MEETUP_JOINED_PEOPLE, [
+                    ...getters.meetup.joinedPeople,
+                    _.pick(user, ['id', 'name', 'username'])
+                ]);
+
+                dispatch('auth/meetupToUser', { type: 'inc', meetupId }, { root: true });
+                return data.data;
+            } catch (err) {
+                console.log(err.response);
+                return errorMesssage(err);
+            }
+        },
+        async leaveMeetup({ getters: { meetup }, rootGetters, commit, dispatch }, meetupId) {
+            if (!meetup || !rootGetters['auth/isAuthenticated']) return;
+            const user = rootGetters['auth/user'];
+            try {
+                const { data } = await deleteOne(`meetups/${meetupId}/leave`);
+                commit(
+                    MEETUP_JOINED_PEOPLE,
+                    meetup.joinedPeople.filter(mt => mt.id !== user.id)
+                );
+                dispatch('auth/meetupToUser', { type: 'dec', meetupId }, { root: true });
+                return data.data;
+            } catch (err) {
+                console.log(err.response);
+                return errorMesssage(err);
             }
         }
     }

@@ -34,8 +34,19 @@
                     </div>
                     <div class="is-pulled-right">
                         <!-- We will handle this later (: -->
-                        <button class="button is-danger">
+                        <button
+                            class="button is-danger"
+                            v-if="userJoinedBefore(meetup.id)"
+                            @click="handleLeaveMeetup"
+                        >
                             Leave Group
+                        </button>
+                        <button
+                            class="button is-primary"
+                            v-if="userCanJoin"
+                            @click="handleJoinMeetup"
+                        >
+                            Join In
                         </button>
                     </div>
                 </div>
@@ -122,16 +133,30 @@
                                 <h3 class="title is-3">
                                     About the Meetup
                                 </h3>
-                                <!-- TODO: meetup description -->
                                 <p>
                                     {{ meetup.descriptions }}
-                                    <!-- Join Meetup, We will handle it later (: -->
-                                    <button class="button is-primary">
-                                        Join In
-                                    </button>
-                                    <!-- Not logged In Case, handle it later (: -->
-                                    <!-- <button :disabled="true"
-                        class="button is-warning">You need authenticate in order to join</button> -->
+                                </p>
+                                <p v-if="!isAuthenticated" class="button is-danger">
+                                    You need authenticate in order to join
+                                    <router-link
+                                        :to="{
+                                            name: 'loginPage',
+                                            query: { redirect: $route.fullPath }
+                                        }"
+                                        class="ml-2 has-text-warning"
+                                    >
+                                        login
+                                    </router-link>
+                                    <span class="mx-1">or</span>
+                                    <router-link
+                                        :to="{
+                                            name: 'signupPage',
+                                            query: { redirect: `${$route.fullPath}` }
+                                        }"
+                                        class="has-text-warning"
+                                    >
+                                        signup
+                                    </router-link>
                                 </p>
                             </div>
                             <!-- Thread List START -->
@@ -236,8 +261,18 @@ export default {
     computed: {
         ...mapGetters({
             meetup: 'meetups/meetup',
-            threads: 'threads'
+            threads: 'threads',
+            isAuthenticated: 'auth/isAuthenticated',
+            isOwnerOfMeetup: 'auth/isOwnerOfMeetup',
+            userJoinedBefore: 'auth/userJoinedBefore'
         }),
+        userCanJoin() {
+            return (
+                this.isAuthenticated &&
+                !this.isOwnerOfMeetup(this.meetup.meetupCreator.id) &&
+                !this.userJoinedBefore(this.meetup.id)
+            );
+        },
         creatorName() {
             return this.meetup.meetupCreator.name;
         },
@@ -252,19 +287,61 @@ export default {
             return '';
         }
     },
-    methods: mapActions({
-        fetchMeetup: 'meetups/fetchMeetup',
-        fetchThreads: 'fetchThreads'
-    }),
-    created() {
-        const { id } = this.$route.params;
-        this.fetchMeetup(id).catch(err => {
+    methods: {
+        ...mapActions({
+            fetchMeetup: 'meetups/fetchMeetup',
+            joinMeetup: 'meetups/joinMeetup',
+            leaveMeetup: 'meetups/leaveMeetup',
+            fetchThreads: 'fetchThreads'
+        }),
+        async handleJoinMeetup() {
+            try {
+                await this.joinMeetup(this.meetup.id);
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'successfully joined meetup',
+                    position: 'is-top',
+                    type: 'is-success'
+                });
+            } catch (err) {
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: err,
+                    position: 'is-top',
+                    type: 'is-danger'
+                });
+            }
+        },
+        async handleLeaveMeetup() {
+            try {
+                await this.leaveMeetup(this.meetup.id);
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'successfully leave meetup',
+                    position: 'is-top',
+                    type: 'is-success'
+                });
+            } catch (err) {
+                this.$buefy.toast.open({
+                    duration: 3000,
+                    message: err,
+                    position: 'is-top',
+                    type: 'is-danger'
+                });
+            }
+        }
+    },
+    async created() {
+        try {
+            const { meetupSlug } = this.$route.params;
+            const meetup = await this.fetchMeetup(meetupSlug);
+            this.fetchThreads(meetup.id);
+        } catch (err) {
             this.meetupNotFoundError = {
                 status: true,
                 message: err
             };
-        });
-        this.fetchThreads(id);
+        }
     },
     components: { ErrorHandler }
 };

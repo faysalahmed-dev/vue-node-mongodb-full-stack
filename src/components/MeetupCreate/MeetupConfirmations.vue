@@ -100,7 +100,7 @@ export default {
                     position: 'is-top',
                     type: 'is-success'
                 });
-                $router.replace({ name: 'meetupDetails', params: { id: meetup.id } });
+                $router.replace({ name: 'meetupDetailsPage', params: { meetupSlug: meetup.slug } });
             } catch (err) {
                 console.log(err);
             } finally {

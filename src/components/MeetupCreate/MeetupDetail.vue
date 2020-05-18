@@ -67,7 +67,7 @@
                 icon-pack="fas"
                 icon-right="forward"
                 @click.prevent="validator_onSubmit(gotoNext)"
-                :disabled="validator_buttonIsDisabled"
+                :disabled="buttonDisable"
             >
                 Next
             </b-button>
@@ -116,6 +116,9 @@ export default {
         }
     },
     computed: {
+        buttonDisable() {
+            return this.validator_buttonIsDisabled || !this.category;
+        },
         mintimeFrom() {
             if (moment(new Date()).isBefore(this.startDate, 'days')) {
                 return this.startDate;

@@ -107,7 +107,7 @@
                         </form>
                     </div>
                     <p class="has-text-grey">
-                        <router-link :to="{ name: 'login' }">
+                        <router-link :to="{ name: 'loginPage' }">
                             Login
                         </router-link>
                         &nbsp;·&nbsp; &nbsp;·&nbsp;
@@ -147,11 +147,15 @@ export default {
                 await this.signupUser(this.formData);
                 this.$buefy.toast.open({
                     duration: 3000,
-                    message: 'successfully logged in',
+                    message: 'successfully account created',
                     position: 'is-top',
                     type: 'is-success'
                 });
-                this.$router.replace('/');
+                if (this.$route.query.redirect) {
+                    this.$router.replace(this.$route.query.redirect);
+                } else {
+                    this.$router.replace('/');
+                }
             } catch (err) {
                 if (Array.isArray(err)) {
                     const some = err.map(el => `<div class="text-right">${el}</div>`);

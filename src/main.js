@@ -22,9 +22,6 @@ Vue.filter('countWord', value => {
 });
 Vue.filter('buildImagePath', value => {
     if (!value) return '';
-    if (value.startsWith('http' || 'https')) {
-        return value;
-    }
     return 'http://localhost:3001/' + value;
 });
 

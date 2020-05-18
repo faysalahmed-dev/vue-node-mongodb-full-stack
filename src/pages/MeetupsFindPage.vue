@@ -38,8 +38,8 @@
                     >
                         <router-link
                             :to="{
-                                name: 'meetupDetails',
-                                params: { id: meetup.id }
+                                name: 'meetupsFindPage',
+                                params: { meetupSlug: meetup.slug }
                             }"
                             class="meetup-card-find"
                             href="#"
@@ -106,9 +106,6 @@ export default {
         ...mapGetters('meetups', ['meetups']),
         buildImagePath() {
             return value => {
-                if (value.startsWith('http' || 'https')) {
-                    return value;
-                }
                 return 'http://localhost:3001/' + value;
             };
         }

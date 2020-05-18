@@ -8,7 +8,9 @@ import {
     descriptionsMaxWords,
     descriptionsMinWords,
     shortInfoMaxWords,
-    shortInfoMinWords
+    shortInfoMinWords,
+    titleMinWord,
+    titleMaxWord
 } from '../../server/utils/constains';
 
 export const setErrorObj = (status, message) => {
@@ -76,8 +78,11 @@ const validate = {
     titleValidator(value) {
         if (isEmpty(value || '')) {
             return setErrorObj(true, 'title field required');
-        } else if (!isLength(value, { min: 10 })) {
-            return setErrorObj(true, 'title too short');
+        } else if (_.words(value).length < titleMinWord || _.words(value).length > titleMaxWord) {
+            return setErrorObj(
+                true,
+                `meetup title must be between ${titleMinWord} to ${titleMaxWord} words`
+            );
         }
         return setErrorObj(false);
     },

@@ -22,3 +22,5 @@ axiosIns.interceptors.request.use(
 
 export const get = path => axiosIns.get(path);
 export const post = (path, data) => axiosIns.post(path, data);
+export const patch = path => axiosIns.patch(path);
+export const deleteOne = path => axiosIns.delete(path);
