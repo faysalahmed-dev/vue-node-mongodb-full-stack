@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { transformObj } = require('../utils/utils');
+const _ = require('lodash');
 const Schema = mongoose.Schema;
 const {
     descriptionsMaxWords,
@@ -9,7 +10,7 @@ const {
     titleMaxWord,
     titleMinWord
 } = require('../utils/constains');
-const _ = require('lodash');
+const slugify = require('slugify');
 
 const meetupSchema = new Schema(
     {
@@ -35,6 +36,7 @@ const meetupSchema = new Schema(
                 }
             }
         },
+        slug: String,
         images: {
             type: [{ type: String, required: true }],
             required: true
@@ -78,10 +80,16 @@ const meetupSchema = new Schema(
         toObject: { virtuals: true }
     }
 );
-meetupSchema.virtual('id').get(function() {
-    return this._id.toHexString();
+
+meetupSchema.pre('save', function(next) {
+    this.slug = slugify(this.title, {
+        replacement: '-',
+        remove: undefined,
+        lower: true,
+        strict: true
+    });
+    next();
 });
 
-meetupSchema.methods.toJSON = transformObj;
-
+meetupSchema.options.toJSON.transform = transformObj;
 module.exports = mongoose.model('Meetup', meetupSchema);

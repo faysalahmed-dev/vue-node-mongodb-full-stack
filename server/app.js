@@ -10,9 +10,16 @@ const meetupsRoutes = require('./routes/meetups'),
     categoriesRoutes = require('./routes/categories');
 
 const app = express();
+app.use((req, res, next) => {
+    //console.log(req.subdomains);
+    // console.log(req.baseUrl);
+    // console.log(req.originalUrl);
+    // console.log(req.path);
+    next();
+});
 
 app.use(require('morgan')('dev'));
-app.use(express.static(path.join(__dirname, '..', 'uploads')));
+app.use(express.static(path.join(__dirname, '..', 'statics')));
 app.use(bodyParser.json());
 
 app.use('/api/v1/meetups', meetupsRoutes);

@@ -74,10 +74,6 @@ userSchema.statics.comparePassword = function(candidatePassword, USER_DB_PASSWOR
     return bcrypt.compare(candidatePassword, USER_DB_PASSWORD);
 };
 
-userSchema.virtual('id').get(function() {
-    return this._id.toHexString();
-});
-
 userSchema.methods.passwordIsChange = function(JWTTimeStamp) {
     if (this.changePasswordAt) {
         const changeTimpStamp = parseInt(this.changePasswordAt.getTime(), 10) / 1000;
@@ -102,6 +98,6 @@ userSchema.statics.verifyToken = function(userToken) {
     });
 };
 
-userSchema.methods.toJSON = transformObj;
+userSchema.options.toJSON.transform = transformObj;
 
 module.exports = model('User', userSchema);

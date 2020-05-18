@@ -20,9 +20,7 @@ const threadSchema = new Schema(
         toObject: { virtuals: true }
     }
 );
-threadSchema.virtual('id').get(function() {
-    return this._id.toHexString();
-});
-threadSchema.methods.toJSON = transformObj;
+
+threadSchema.options.toJSON.transform = transformObj;
 
 module.exports = mongoose.model('Thread', threadSchema);

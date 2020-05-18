@@ -11,7 +11,7 @@ const {
 } = require('../middlerwere/validator');
 
 router.get('', MeetupsCtrl.getMeetups);
-router.get('/:id', MeetupsCtrl.getMeetupById);
+router.get('/:slug', MeetupsCtrl.getMeetupBySlug);
 router.post(
     '/create-meetup',
     isAuthenticated,
@@ -22,4 +22,6 @@ router.post(
     resizeImage,
     MeetupsCtrl.createMeetup
 );
+router.patch('/:meetupId/join', isAuthenticated, MeetupsCtrl.joinMeetup);
+router.delete('/:meetupId/leave', isAuthenticated, MeetupsCtrl.leaveMeetup);
 module.exports = router;

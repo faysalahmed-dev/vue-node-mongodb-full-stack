@@ -19,6 +19,7 @@ exports.signup = catchError(async (req, res, next) => {
     if (hasUser) return next(httpError(403, 'user already exits'));
 
     const userData = _.pick(req.body, ['name', 'username', 'email', 'password']);
+    userData.avatar = `avatar/avatar-default.png`;
     const user = await User.create(userData);
     sendResponse(res, 201, { data: user, token: user.genToken() });
 });

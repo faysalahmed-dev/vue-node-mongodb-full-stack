@@ -47,8 +47,8 @@ exports.resizeImage = catchError(async (req, res, next) => {
     req.files.forEach(async file => {
         file.filename = `${req.user.id}-${Date.now()}.jpeg`;
         const img = await jimp.read(file.buffer);
-        img.resize(500, 500);
-        await img.writeAsync(`uploads/${file.filename}`);
+        img.resize(500, jimp.AUTO);
+        await img.writeAsync(`statics/meetups/${file.filename}`);
     });
     next();
 });

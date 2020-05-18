@@ -15,10 +15,6 @@ const categorySchema = new Schema(
     }
 );
 
-categorySchema.virtual('id').get(function() {
-    return this._id.toHexString();
-});
-
-categorySchema.methods.toJSON = transformObj;
+categorySchema.options.toJSON.transform = transformObj;
 
 module.exports = mongoose.model('Category', categorySchema);

@@ -20,8 +20,6 @@ const postSchema = new Schema(
     }
 );
 
-postSchema.virtual('id').get(function() {
-    return this._id.toHexString();
-});
-postSchema.methods.toJSON = transformObj;
+postSchema.options.toJSON.transform = transformObj;
+
 module.exports = mongoose.model('Post', postSchema);
