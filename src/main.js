@@ -1,15 +1,23 @@
 import Vue from 'vue';
 import moment from 'moment';
 import Buefy from 'buefy';
+import _ from 'lodash';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
 import router from '@/routes';
 import store from '@/store';
 import App from '@/App.vue';
 import Spiner from '@/components/Spiner.vue';
-import '@/registerServiceWorker';
-import _ from 'lodash';
 
+import '@/registerServiceWorker';
 import '@/sass/styles.scss';
-Vue.use(Buefy);
+import '@/components/Icon';
+
+Vue.component('vue-fontawesome', FontAwesomeIcon);
+Vue.use(Buefy, {
+    defaultIconComponent: 'vue-fontawesome',
+    defaultIconPack: 'fas'
+});
 
 Vue.filter('formatTime', (value, formateType = 'LL') => {
     if (!value) return '';

@@ -102,7 +102,22 @@ export default {
                 });
                 $router.replace({ name: 'meetupDetailsPage', params: { meetupSlug: meetup.slug } });
             } catch (err) {
-                console.log(err);
+                if (Array.isArray(err)) {
+                    const some = err.map(el => `<div class="text-right">${el}</div>`);
+                    this.$buefy.toast.open({
+                        duration: 3000,
+                        message: some.join(''),
+                        position: 'is-top-right',
+                        type: 'is-danger'
+                    });
+                } else {
+                    this.$buefy.toast.open({
+                        duration: 3000,
+                        message: err,
+                        position: 'is-top-right',
+                        type: 'is-danger'
+                    });
+                }
             } finally {
                 this.isSubmiting = false;
             }

@@ -23,5 +23,6 @@ server/config
 resources
 todo.txt
 db.txt
+statics/meetups/*.jpeg
 
 

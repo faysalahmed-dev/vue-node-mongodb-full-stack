@@ -69,6 +69,9 @@ export default {
     methods: {
         logoutUser() {
             this.$store.dispatch('auth/logoutUser');
+            if (this.$route.meta.requiresAuth) {
+                this.$router.replace('/');
+            }
         }
     }
 };

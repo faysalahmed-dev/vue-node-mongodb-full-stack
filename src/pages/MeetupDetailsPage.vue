@@ -119,7 +119,7 @@
                                         <figure class="image is-64x64">
                                             <img
                                                 class="is-rounded"
-                                                :src="people.avatar"
+                                                :src="people.avatar | buildImagePath"
                                                 alt="Image"
                                             />
                                         </figure>
@@ -159,71 +159,12 @@
                                     </router-link>
                                 </p>
                             </div>
-                            <!-- Thread List START -->
+                            <CreateThread v-if="showThreadCreateButton" :meetup-id="meetup.id" />
                             <div class="content is-medium">
                                 <h3 class="title is-3">
                                     Threads
                                 </h3>
-                                <template v-if="threads">
-                                    <div class="box" v-for="thread in threads" :key="thread.id">
-                                        <!-- Thread title -->
-                                        <h4 id="const" class="title is-3">
-                                            {{ thread.title }}
-                                        </h4>
-                                        <!-- Create new post, handle later -->
-                                        <form class="post-create">
-                                            <div class="field">
-                                                <textarea
-                                                    class="textarea textarea-post"
-                                                    placeholder="Write a post"
-                                                    rows="1"
-                                                ></textarea>
-                                                <button
-                                                    :disabled="true"
-                                                    class="button is-primary mt-2"
-                                                >
-                                                    Send
-                                                </button>
-                                            </div>
-                                        </form>
-                                        <!-- Create new post END, handle later -->
-                                        <!-- Posts START -->
-                                        <article
-                                            class="media post-item"
-                                            v-for="post in thread.posts"
-                                            :key="post.id"
-                                        >
-                                            <figure class="media-left is-rounded user-image">
-                                                <p class="image is-32x32">
-                                                    <img
-                                                        class="is-rounded"
-                                                        :src="post.user.avatar"
-                                                    />
-                                                </p>
-                                            </figure>
-                                            <div class="media-content">
-                                                <div class="content is-medium">
-                                                    <div class="post-content">
-                                                        <!-- Post User Name -->
-                                                        <strong class="author">
-                                                            {{ post.user.name }}
-                                                        </strong>
-                                                        {{ ' ' }}
-                                                        <!-- Post Updated at -->
-                                                        <small class="post-time">
-                                                            {{ post.updatedAt | formatTime('LLL') }}
-                                                        </small>
-                                                        <br />
-                                                        <p class="post-content-message">
-                                                            {{ post.text }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </article>
-                                        <!-- Posts END -->
-                                    </div>
-                                </template>
+                                <ThreadsItems v-if="threads" />
                                 <div
                                     v-else
                                     style="height:200px"
@@ -231,7 +172,10 @@
                                 >
                                     <Spiner />
                                 </div>
-                                <p v-if="threads && threads < 1" class="p-4 text-center size-4">
+                                <p
+                                    v-if="threads && Object.keys(threads).length < 1"
+                                    class="p-4 text-center size-4"
+                                >
                                     no threads found
                                 </p>
                             </div>
@@ -250,6 +194,8 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import ErrorHandler from '@/components/ErrorHandler';
+import CreateThread from '@/components/Threads/CreateThread';
+import ThreadsItems from '@/components/Threads/ThreadsItems';
 
 export default {
     name: 'MeetupDetailsPage',
@@ -261,7 +207,7 @@ export default {
     computed: {
         ...mapGetters({
             meetup: 'meetups/meetup',
-            threads: 'threads',
+            threads: 'threads/threads',
             isAuthenticated: 'auth/isAuthenticated',
             isOwnerOfMeetup: 'auth/isOwnerOfMeetup',
             userJoinedBefore: 'auth/userJoinedBefore'
@@ -271,6 +217,13 @@ export default {
                 this.isAuthenticated &&
                 !this.isOwnerOfMeetup(this.meetup.meetupCreator.id) &&
                 !this.userJoinedBefore(this.meetup.id)
+            );
+        },
+        showThreadCreateButton() {
+            if (!this.isAuthenticated) return false;
+            return (
+                this.isOwnerOfMeetup(this.meetup.meetupCreator.id) ||
+                this.userJoinedBefore(this.meetup.id)
             );
         },
         creatorName() {
@@ -292,7 +245,7 @@ export default {
             fetchMeetup: 'meetups/fetchMeetup',
             joinMeetup: 'meetups/joinMeetup',
             leaveMeetup: 'meetups/leaveMeetup',
-            fetchThreads: 'fetchThreads'
+            fetchThreads: 'threads/fetchThreads'
         }),
         async handleJoinMeetup() {
             try {
@@ -337,13 +290,14 @@ export default {
             const meetup = await this.fetchMeetup(meetupSlug);
             this.fetchThreads(meetup.id);
         } catch (err) {
+            console.log(err);
             this.meetupNotFoundError = {
                 status: true,
                 message: err
             };
         }
     },
-    components: { ErrorHandler }
+    components: { ErrorHandler, CreateThread, ThreadsItems }
 };
 </script>
 

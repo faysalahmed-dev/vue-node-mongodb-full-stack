@@ -19,16 +19,7 @@ export default {
         if (process.env.NODE_ENV === 'development' && !this.formData) {
             throw new Error('Form data is required for work validations mixin');
         }
-        this.validator = _.transform(
-            this.formData,
-            (result, val, key) => {
-                result[key] = {
-                    error: { status: false, message: '' },
-                    touched: false
-                };
-            },
-            {}
-        );
+        this.resetValidateState();
     },
     methods: {
         [validate](name) {
@@ -61,6 +52,18 @@ export default {
             if (!this.validator_buttonIsDisabled && callBackHandler) {
                 callBackHandler();
             }
+        },
+        resetValidateState() {
+            this.validator = _.transform(
+                this.formData,
+                (result, val, key) => {
+                    result[key] = {
+                        error: { status: false, message: '' },
+                        touched: false
+                    };
+                },
+                {}
+            );
         }
     }
 };

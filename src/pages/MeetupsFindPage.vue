@@ -38,7 +38,7 @@
                     >
                         <router-link
                             :to="{
-                                name: 'meetupsFindPage',
+                                name: 'meetupDetailsPage',
                                 params: { meetupSlug: meetup.slug }
                             }"
                             class="meetup-card-find"

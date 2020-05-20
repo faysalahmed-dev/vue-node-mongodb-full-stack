@@ -14,7 +14,7 @@
                             <img :src="require('@/assets/128x128.png')" />
                         </figure>
 
-                        <form class="text-left">
+                        <form class="text-left" @submit.prevent="validator_onSubmit(handleSubmit)">
                             <b-field
                                 label="Name"
                                 :type="{ 'is-danger': hasError('name').status }"
@@ -26,7 +26,7 @@
                                     placeholder="Your Name"
                                     name="name"
                                     size="is-medium"
-                                    icon-pack="fas"
+                                    ref="nameInput"
                                 ></b-input>
                             </b-field>
 
@@ -99,7 +99,7 @@
                                 :disabled="validator_buttonIsDisabled"
                                 expanded
                                 size="is-medium"
-                                @click.prevent="validator_onSubmit(handleSubmit)"
+                                native-type="submit"
                                 :loading="isFormSubmiting"
                             >
                                 Sign Up
@@ -182,6 +182,9 @@ export default {
         hasError() {
             return field => this.validator[field].error;
         }
+    },
+    mounted() {
+        this.$refs.nameInput.focus();
     }
 };
 </script>

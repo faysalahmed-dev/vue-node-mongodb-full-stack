@@ -1,6 +1,7 @@
 import isJWT from 'validator/lib/isJWT';
 import * as http from '@/api/api';
 import ls from '@/utils/localStorage';
+import catchError from '../catchError';
 
 const SET_USER = Symbol('SET_USER').toString();
 const SET_AUTH_STATE_LOADED = Symbol('SET_AUTH_STATE_LOADED').toString();
@@ -34,18 +35,14 @@ export default {
         }
     },
     actions: {
-        async loginUser({ commit }, userInfo) {
-            try {
-                const {
-                    data: { data, token }
-                } = await http.post('users/login', userInfo);
-                ls.setToken(token);
-                commit(SET_USER, data);
-                return data;
-            } catch (error) {
-                return Promise.reject(error.response.data.message || 'some thing went wrong');
-            }
-        },
+        loginUser: catchError(async ({ commit }, userInfo) => {
+            const {
+                data: { data, token }
+            } = await http.post('users/login', userInfo);
+            ls.setToken(token);
+            commit(SET_USER, data);
+            return data;
+        }),
         async signupUser({ commit }, userInfo) {
             try {
                 const {

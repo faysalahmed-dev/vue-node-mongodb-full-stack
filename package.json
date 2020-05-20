@@ -18,6 +18,9 @@
         "pm2-start": "env-cmd -f ./server/config/.env pm2 start server/index.js --name \"meetuper\""
     },
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^1.2.28",
+        "@fortawesome/free-solid-svg-icons": "^5.13.0",
+        "@fortawesome/vue-fontawesome": "^0.1.9",
         "algoliasearch": "^4.2.0",
         "axios": "^0.19.2",
         "bcrypt": "^4.0.1",

@@ -13,8 +13,7 @@
                         <figure class="avatar">
                             <img :src="require('@/assets/128x128.png')" />
                         </figure>
-
-                        <form class="text-left">
+                        <form class="text-left" @submit.prevent="validator_onSubmit(handleSubmit)">
                             <b-field
                                 label="Email"
                                 :type="{ 'is-danger': hasError('email').status }"
@@ -26,7 +25,7 @@
                                     placeholder="Your Email"
                                     name="email"
                                     size="is-medium"
-                                    icon-pack="fas"
+                                    ref="emailInput"
                                 ></b-input>
                             </b-field>
 
@@ -43,7 +42,6 @@
                                     name="password"
                                     password-reveal
                                     size="is-medium"
-                                    icon-pack="fas"
                                 ></b-input>
                             </b-field>
                             <b-button
@@ -51,8 +49,8 @@
                                 :disabled="validator_buttonIsDisabled"
                                 expanded
                                 size="is-medium"
-                                @click.prevent="validator_onSubmit(handleSubmit)"
                                 :loading="isFormSubmiting"
+                                native-type="submit"
                             >
                                 Login
                             </b-button>
@@ -121,6 +119,9 @@ export default {
         hasError() {
             return field => this.validator[field].error;
         }
+    },
+    mounted() {
+        this.$refs.emailInput.focus();
     }
 };
 </script>
