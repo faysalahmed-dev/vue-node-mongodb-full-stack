@@ -8,7 +8,8 @@ const {
     descriptionsMaxWords,
     descriptionsMinWords,
     shortInfoMaxWords,
-    shortInfoMinWords
+    shortInfoMinWords,
+    postTextMaxWord
 } = require('../utils/constains');
 const _ = require('lodash');
 const moment = require('moment');
@@ -92,7 +93,7 @@ module.exports = {
         }
     },
     title: {
-        isEmpty: fieldRequired('meetup title'),
+        isEmpty: fieldRequired('title'),
         custom: {
             errorMessage: `title must be between ${titleMinWord} to ${titleMaxWord} words`,
             options(value) {
@@ -171,6 +172,16 @@ module.exports = {
             options(value) {
                 const words = _.words(value).length;
                 return words >= descriptionsMinWords && words <= descriptionsMaxWords;
+            }
+        }
+    },
+    text: {
+        isEmpty: fieldRequired('post text'),
+        custom: {
+            errorMessage: `too long! post text max word count ${postTextMaxWord}`,
+            options(value) {
+                const words = _.words(value).length;
+                return words <= postTextMaxWord;
             }
         }
     }

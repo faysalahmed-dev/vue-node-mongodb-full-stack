@@ -27,7 +27,7 @@ exports.getMeetupBySlug = catchError(async (req, res, next) => {
         .populate('category')
         .populate({
             path: 'joinedPeople',
-            options: { limit: 5, sort: { username: -1 }, select: 'id name username' }
+            options: { limit: 5, select: 'id name avatar' }
         });
 
     if (!meetup) return next(httpError(404, 'meetup not found'));

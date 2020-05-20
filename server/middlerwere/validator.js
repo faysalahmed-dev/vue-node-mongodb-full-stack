@@ -15,6 +15,14 @@ exports.loginValidator = checkSchema({
     password: scheams.password
 });
 
+exports.threadsCreate = checkSchema({
+    title: scheams.title
+});
+
+exports.postCreateValidator = checkSchema({
+    text: scheams.text
+});
+
 exports.createMeetupValidator = checkSchema({
     title: scheams.title,
     'location.country': scheams.location.country,

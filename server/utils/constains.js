@@ -8,5 +8,6 @@ module.exports = {
     shortInfoMaxWords: 50,
     shortInfoMinWords: 10,
     titleMaxWord: 30,
-    titleMinWord: 5
+    titleMinWord: 5,
+    postTextMaxWord: 200
 };
